@@ -3,8 +3,13 @@
 import { useState, useCallback, useEffect } from 'react';
 
 interface CompanyInputProps {
-  onSubmit: (companyName: string) => void;
+  onSubmit: (companyName: string, domain?: string) => void;
   isLoading: boolean;
+}
+
+interface SearchHistoryItem {
+  name: string;
+  domain?: string;
 }
 
 const STORAGE_KEY = 'is-talk-tree-search-history';
@@ -12,14 +17,21 @@ const MAX_HISTORY = 5;
 
 export default function CompanyInput({ onSubmit, isLoading }: CompanyInputProps) {
   const [companyName, setCompanyName] = useState('');
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [domain, setDomain] = useState('');
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
 
   // 検索履歴をlocalStorageから読み込む
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        setSearchHistory(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        // 旧形式（string[]）との互換性を保持
+        if (Array.isArray(parsed) && typeof parsed[0] === 'string') {
+          setSearchHistory(parsed.map((name: string) => ({ name })));
+        } else {
+          setSearchHistory(parsed);
+        }
       }
     } catch (e) {
       console.error('Failed to load search history:', e);
@@ -27,11 +39,11 @@ export default function CompanyInput({ onSubmit, isLoading }: CompanyInputProps)
   }, []);
 
   // 検索履歴を保存
-  const saveToHistory = useCallback((name: string) => {
+  const saveToHistory = useCallback((name: string, domainValue?: string) => {
     setSearchHistory(prev => {
       // 重複を除去し、新しい検索を先頭に追加
-      const filtered = prev.filter(item => item !== name);
-      const newHistory = [name, ...filtered].slice(0, MAX_HISTORY);
+      const filtered = prev.filter(item => item.name !== name);
+      const newHistory = [{ name, domain: domainValue }, ...filtered].slice(0, MAX_HISTORY);
 
       // localStorageに保存
       try {
@@ -47,19 +59,27 @@ export default function CompanyInput({ onSubmit, isLoading }: CompanyInputProps)
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (companyName.trim()) {
-      saveToHistory(companyName.trim());
-      onSubmit(companyName.trim());
+      const trimmedDomain = domain.trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+      saveToHistory(companyName.trim(), trimmedDomain || undefined);
+      onSubmit(companyName.trim(), trimmedDomain || undefined);
     }
-  }, [companyName, onSubmit, saveToHistory]);
+  }, [companyName, domain, onSubmit, saveToHistory]);
 
-  const handleQuickSelect = useCallback((name: string) => {
-    setCompanyName(name);
-    saveToHistory(name);
-    onSubmit(name);
+  const handleQuickSelect = useCallback((item: SearchHistoryItem) => {
+    setCompanyName(item.name);
+    setDomain(item.domain || '');
+    saveToHistory(item.name, item.domain);
+    onSubmit(item.name, item.domain);
   }, [onSubmit, saveToHistory]);
 
   // デフォルトの企業リスト（履歴がない場合に表示）
-  const defaultCompanies = ['トヨタ自動車', 'ソフトバンク', '三菱UFJ銀行', 'ソニー', '楽天'];
+  const defaultCompanies: SearchHistoryItem[] = [
+    { name: 'トヨタ自動車', domain: 'toyota.co.jp' },
+    { name: 'ソフトバンク', domain: 'softbank.co.jp' },
+    { name: '三菱UFJ銀行', domain: 'bk.mufg.jp' },
+    { name: 'ソニー', domain: 'sony.co.jp' },
+    { name: '楽天', domain: 'rakuten.co.jp' },
+  ];
   const displayCompanies = searchHistory.length > 0 ? searchHistory : defaultCompanies;
 
   return (
@@ -113,6 +133,25 @@ export default function CompanyInput({ onSubmit, isLoading }: CompanyInputProps)
                 )}
               </button>
             </div>
+
+            {/* ドメイン入力（オプション） */}
+            <div className="search-domain-wrapper">
+              <label className="search-domain-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="16 18 22 12 16 6"/>
+                  <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                使用ツール取得（任意）
+              </label>
+              <input
+                type="text"
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                placeholder="例：toyota.co.jp"
+                className="search-domain-input"
+                disabled={isLoading}
+              />
+            </div>
           </form>
 
           {/* クイック選択 */}
@@ -131,14 +170,18 @@ export default function CompanyInput({ onSubmit, isLoading }: CompanyInputProps)
               )}
             </p>
             <div className="search-quick-list">
-              {displayCompanies.map((c) => (
+              {displayCompanies.map((item) => (
                 <button
-                  key={c}
-                  onClick={() => handleQuickSelect(c)}
+                  key={item.name}
+                  onClick={() => handleQuickSelect(item)}
                   className="search-quick-item"
                   disabled={isLoading}
+                  title={item.domain ? `ドメイン: ${item.domain}` : undefined}
                 >
-                  {c}
+                  {item.name}
+                  {item.domain && (
+                    <span className="search-quick-domain">{item.domain}</span>
+                  )}
                 </button>
               ))}
             </div>

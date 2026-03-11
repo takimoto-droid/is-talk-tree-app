@@ -38,9 +38,18 @@ export type IndustryCategory =
 // 会社情報
 export interface CompanyInfo {
   name: string;
+  domain?: string;
   industry?: IndustryCategory;
   estimatedIndustry?: IndustryCategory;
   news?: NewsItem[];
+  techStack?: TechItem[];
+}
+
+// 技術スタック
+export interface TechItem {
+  name: string;
+  category: string;
+  description?: string;
 }
 
 // ニュース記事

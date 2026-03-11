@@ -1296,6 +1296,50 @@ body {
   cursor: not-allowed;
 }
 
+.search-domain-wrapper {
+  margin-bottom: 20px;
+}
+
+.search-domain-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.search-domain-label svg {
+  color: #06b6d4;
+}
+
+.search-domain-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #94a3b8;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-domain-input::placeholder {
+  color: #475569;
+}
+
+.search-domain-input:focus {
+  border-color: rgba(6, 182, 212, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+}
+
+.search-domain-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .search-button-text {
   display: flex;
   align-items: center;
@@ -1355,6 +1399,14 @@ body {
 .search-quick-item:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.search-quick-domain {
+  display: block;
+  font-size: 10px;
+  color: #06b6d4;
+  margin-top: 2px;
+  opacity: 0.7;
 }
 
 /* ========== セットアップ画面 ========== */
@@ -1575,4 +1627,121 @@ body {
   color: #64748b;
   margin: 0;
   text-align: center;
+}
+
+/* ========== 技術スタック ========== */
+
+.panel-icon.tech {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+.tech-stack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.tech-category {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.tech-category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tech-category-header svg {
+  color: #06b6d4;
+}
+
+.tech-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-item {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.1));
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.tech-item:hover {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(8, 145, 178, 0.15));
+  border-color: rgba(6, 182, 212, 0.3);
+  transform: translateY(-1px);
+}
+
+.tech-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.tech-desc {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.tech-stack-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(251, 191, 36, 0.08);
+  border-top: 1px solid rgba(251, 191, 36, 0.15);
+  font-size: 12px;
+  color: #fbbf24;
+}
+
+.tech-stack-note svg {
+  flex-shrink: 0;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #06b6d4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.panel-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.panel-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
 }

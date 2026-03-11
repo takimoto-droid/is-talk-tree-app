@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { TalkNode, CaseStudy, GenerateTreeResponse, NewsItem } from '@/types';
+import { TalkNode, CaseStudy, GenerateTreeResponse, NewsItem, TechItem } from '@/types';
 import { generateTalkTree } from '@/lib/treeGenerator';
 import { useProject } from '@/context/ProjectContext';
 import ProjectSetup from '@/components/ProjectSetup';
@@ -10,12 +10,17 @@ import TalkTree from '@/components/TalkTree';
 import TalkScriptPanel from '@/components/TalkScriptPanel';
 import NewsPanel from '@/components/NewsPanel';
 import CasePanel from '@/components/CasePanel';
+import TechStackPanel from '@/components/TechStackPanel';
 
 export default function Home() {
   const { config, isConfigured, reset: resetProject } = useProject();
   const [isLoading, setIsLoading] = useState(false);
   const [treeData, setTreeData] = useState<GenerateTreeResponse | null>(null);
   const [selectedNode, setSelectedNode] = useState<TalkNode | null>(null);
+  const [techStack, setTechStack] = useState<TechItem[]>([]);
+  const [techSource, setTechSource] = useState<string>('');
+  const [techLoading, setTechLoading] = useState(false);
+  const [currentDomain, setCurrentDomain] = useState<string>('');
 
   const fetchNews = async (companyName: string): Promise<NewsItem[]> => {
     try {
@@ -29,7 +34,27 @@ export default function Home() {
     }
   };
 
-  const handleGenerateTree = useCallback(async (companyName: string) => {
+  const fetchTechStack = async (domain: string): Promise<void> => {
+    if (!domain) return;
+
+    setTechLoading(true);
+    try {
+      const response = await fetch(`/api/techstack?domain=${encodeURIComponent(domain)}`);
+      if (!response.ok) throw new Error('TechStack fetch failed');
+      const data = await response.json();
+      setTechStack(data.technologies || []);
+      setTechSource(data.source || '');
+      setCurrentDomain(domain);
+    } catch (error) {
+      console.error('Failed to fetch tech stack:', error);
+      setTechStack([]);
+      setTechSource('error');
+    } finally {
+      setTechLoading(false);
+    }
+  };
+
+  const handleGenerateTree = useCallback(async (companyName: string, domain?: string) => {
     if (!config) return;
 
     setIsLoading(true);
@@ -42,6 +67,11 @@ export default function Home() {
       const result = generateTalkTree(companyName, config, news);
       setTreeData(result);
       setSelectedNode(result.tree);
+
+      // ドメインが指定されていれば技術スタックを取得
+      if (domain) {
+        fetchTechStack(domain);
+      }
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -56,6 +86,9 @@ export default function Home() {
   const handleReset = useCallback(() => {
     setTreeData(null);
     setSelectedNode(null);
+    setTechStack([]);
+    setTechSource('');
+    setCurrentDomain('');
   }, []);
 
   const handleChangeProject = useCallback(() => {
@@ -157,6 +190,16 @@ export default function Home() {
             <NewsPanel companyInfo={treeData.companyInfo} />
             <CasePanel cases={treeData.matchedCases} onSelectCase={handleSelectCase} />
           </div>
+
+          {/* 使用ツール・技術（BuiltWith） */}
+          {(techStack.length > 0 || techLoading || currentDomain) && (
+            <TechStackPanel
+              technologies={techStack}
+              domain={currentDomain}
+              isLoading={techLoading}
+              source={techSource}
+            />
+          )}
 
           {/* トークスクリプト（①〜⑥） */}
           <TalkScriptPanel
