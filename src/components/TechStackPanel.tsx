@@ -11,7 +11,7 @@ interface TechStackPanelProps {
 }
 
 export default function TechStackPanel({ technologies, domain, isLoading, source }: TechStackPanelProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   // カテゴリごとにグループ化
   const groupedTech = technologies.reduce((acc, tech) => {

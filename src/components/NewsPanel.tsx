@@ -8,7 +8,7 @@ interface NewsPanelProps {
 }
 
 export default function NewsPanel({ companyInfo }: NewsPanelProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const hasNews = companyInfo.news && companyInfo.news.length > 0;
 
   return (
