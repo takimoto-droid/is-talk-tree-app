@@ -5,7 +5,7 @@ import { GenerateTreeRequest } from '@/types';
 export async function POST(request: Request) {
   try {
     const body: GenerateTreeRequest = await request.json();
-    const { companyName } = body;
+    const { companyName, config } = body;
 
     if (!companyName || typeof companyName !== 'string') {
       return NextResponse.json(
@@ -14,8 +14,15 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!config) {
+      return NextResponse.json(
+        { error: '案件設定が必要です' },
+        { status: 400 }
+      );
+    }
+
     // トークツリーを生成
-    const result = generateTalkTree(companyName);
+    const result = generateTalkTree(companyName, config);
 
     return NextResponse.json(result);
   } catch (error) {

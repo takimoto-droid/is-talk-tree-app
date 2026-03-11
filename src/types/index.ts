@@ -56,6 +56,7 @@ export interface NewsItem {
 // トークツリー生成リクエスト
 export interface GenerateTreeRequest {
   companyName: string;
+  config: ProjectConfig;
 }
 
 // トークツリー生成レスポンス
@@ -74,4 +75,29 @@ export interface ObjectionHandler {
   label: string;
   response: string;
   followUp: string;
+}
+
+// 案件設定（Excelから読み込む）
+export interface ProjectConfig {
+  // 製品/サービス情報
+  productName: string;
+  productNameKana?: string;
+  companyName: string;
+  headquarters?: string;
+  productDescription: string;
+  keyFeatures: string[];
+  targetIndustries: string[];
+
+  // 導入事例
+  caseStudies: CaseStudy[];
+
+  // 反論対応
+  objectionHandlers: ObjectionHandler[];
+
+  // 商談設定
+  meetingDuration: string;
+  meetingAgenda?: string[];
+
+  // 検索キーワード（ニュース優先度用）
+  searchKeywords?: string[];
 }

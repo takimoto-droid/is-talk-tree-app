@@ -3,6 +3,8 @@
 import { useState, useCallback } from 'react';
 import { TalkNode, CaseStudy, GenerateTreeResponse, NewsItem } from '@/types';
 import { generateTalkTree } from '@/lib/treeGenerator';
+import { useProject } from '@/context/ProjectContext';
+import ProjectSetup from '@/components/ProjectSetup';
 import CompanyInput from '@/components/CompanyInput';
 import TalkTree from '@/components/TalkTree';
 import TalkScriptPanel from '@/components/TalkScriptPanel';
@@ -10,6 +12,7 @@ import NewsPanel from '@/components/NewsPanel';
 import CasePanel from '@/components/CasePanel';
 
 export default function Home() {
+  const { config, isConfigured, reset: resetProject } = useProject();
   const [isLoading, setIsLoading] = useState(false);
   const [treeData, setTreeData] = useState<GenerateTreeResponse | null>(null);
   const [selectedNode, setSelectedNode] = useState<TalkNode | null>(null);
@@ -27,6 +30,8 @@ export default function Home() {
   };
 
   const handleGenerateTree = useCallback(async (companyName: string) => {
+    if (!config) return;
+
     setIsLoading(true);
 
     try {
@@ -34,7 +39,7 @@ export default function Home() {
       const news = await fetchNews(companyName);
 
       // トークツリーを生成
-      const result = generateTalkTree(companyName, news);
+      const result = generateTalkTree(companyName, config, news);
       setTreeData(result);
       setSelectedNode(result.tree);
     } catch (error) {
@@ -42,7 +47,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [config]);
 
   const handleSelectNode = useCallback((node: TalkNode) => {
     setSelectedNode(node);
@@ -53,32 +58,58 @@ export default function Home() {
     setSelectedNode(null);
   }, []);
 
+  const handleChangeProject = useCallback(() => {
+    setTreeData(null);
+    setSelectedNode(null);
+    resetProject();
+  }, [resetProject]);
+
   const handleSelectCase = useCallback((caseStudy: CaseStudy) => {
-    alert(
-      `【${caseStudy.companyName}】\n\n` +
-      `業界: ${caseStudy.industry}\n\n` +
-      `課題: ${caseStudy.challenge}\n\n` +
-      `成果: ${caseStudy.result}\n\n` +
-      (caseStudy.quote ? `声: 「${caseStudy.quote}」` : '')
-    );
+    if (caseStudy.url) {
+      window.open(caseStudy.url, '_blank');
+    } else {
+      alert(
+        `【${caseStudy.companyName}】\n\n` +
+        `業界: ${caseStudy.industry}\n\n` +
+        `課題: ${caseStudy.challenge}\n\n` +
+        `成果: ${caseStudy.result}`
+      );
+    }
   }, []);
+
+  // 設定がない場合はセットアップ画面を表示
+  if (!isConfigured || !config) {
+    return <ProjectSetup />;
+  }
 
   return (
     <main className="app-container">
       {/* ヘッダー */}
       <header className="app-header">
-        <h1 className="app-logo">
-          <span>IS</span> Talk Tree
-        </h1>
-        {treeData && (
-          <button onClick={handleReset} className="reset-button">
+        <div className="app-header-left">
+          <h1 className="app-logo">
+            <span>IS</span> Talk Tree
+          </h1>
+          <span className="app-project-name">{config.productName}</span>
+        </div>
+        <div className="app-header-right">
+          {treeData && (
+            <button onClick={handleReset} className="reset-button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
+              リセット
+            </button>
+          )}
+          <button onClick={handleChangeProject} className="change-project-button">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-              <path d="M3 3v5h5"/>
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+              <polyline points="14 2 14 8 20 8"/>
             </svg>
-            リセット
+            案件変更
           </button>
-        )}
+        </div>
       </header>
 
       {/* メイン */}
@@ -134,6 +165,7 @@ export default function Home() {
             news={treeData.companyInfo.news || []}
             bestCase={treeData.matchedCases[0]}
             secondCase={treeData.matchedCases[1] || treeData.matchedCases[0]}
+            config={config}
           />
 
           {/* トークツリー（⑥以降の分岐） */}

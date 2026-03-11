@@ -1,69 +1,50 @@
-import { TalkNode, IndustryCategory, GenerateTreeResponse, CompanyInfo, NewsItem } from '@/types';
-import { estimateIndustry, getMatchedCases, getBestMatchCase, getIndustryLabel } from './industryMatcher';
-import { objectionHandlers } from '@/data/caseStudies';
+import { TalkNode, GenerateTreeResponse, CompanyInfo, NewsItem, ProjectConfig, CaseStudy } from '@/types';
 
-function replaceTemplateVars(template: string, vars: Record<string, string>): string {
-  let result = template;
-  for (const [key, value] of Object.entries(vars)) {
-    result = result.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
-  }
-  return result;
-}
+export function generateTalkTree(
+  companyName: string,
+  config: ProjectConfig,
+  news?: NewsItem[]
+): GenerateTreeResponse {
+  const caseStudies = config.caseStudies;
+  const bestCase = caseStudies[0] || getDefaultCase(config.productName);
+  const secondCase = caseStudies[1] || caseStudies[0] || getDefaultCase(config.productName);
 
-export function generateTalkTree(companyName: string, news?: NewsItem[]): GenerateTreeResponse {
-  const industry = estimateIndustry(companyName);
-  const matchedCases = getMatchedCases(industry, 3);
-  const bestCase = getBestMatchCase(industry);
-  const secondCase = matchedCases[1] || matchedCases[0];
-  const industryLabel = getIndustryLabel(industry);
+  // 業界を推定
+  const estimatedIndustry = estimateIndustryFromName(companyName, config.targetIndustries);
 
   // ニュースから最も関連度の高い記事を取得
   const topNews = news && news.length > 0 ? news[0] : null;
   const secondNews = news && news.length > 1 ? news[1] : null;
 
-  const templateVars = {
-    companyName,
-    industry: industryLabel,
-    caseCompany: bestCase.companyName,
-    caseResult: bestCase.result,
-    caseChallenge: bestCase.challenge,
-  };
-
   // ===== ① 冒頭挨拶（固定） =====
   const script1 = `お世話になっております。
-DOMO株式会社の○○と申します。`;
+${config.companyName}の○○と申します。`;
 
   // ===== ② 記事拝見トーク（AIが生成） =====
   const script2 = topNews
     ? `先日、「${topNews.title}」という記事を拝見いたしまして、お電話させていただきました。`
     : `${companyName}様のDX推進に関する取り組みを拝見いたしまして、お電話させていただきました。`;
 
-  // ===== ③ DOMOの紹介（AIが生成） =====
-  const script3 = `DOMOは、アメリカのユタ州に本社がございまして、データ活用のクラウドプラットフォームを提供しております。
+  // ===== ③ 製品の紹介（AIが生成） =====
+  const script3 = `${config.productName}は、${config.headquarters ? config.headquarters + 'に本社がございまして、' : ''}${config.productDescription}を提供しております。
 
-Fortune 500企業の半数以上、日本でも${industryLabel}を中心に多くの企業様にご導入いただいております。`;
+${config.targetIndustries.length > 0 ? config.targetIndustries.slice(0, 3).join('、') + 'を中心に' : ''}多くの企業様にご導入いただいております。`;
 
   // ===== ④ 記事の特徴を要約（AIが生成） =====
   const script4 = topNews
-    ? `記事を拝見する中で、${companyName}様が${
-        topNews.title.includes('DX') || topNews.title.includes('デジタル')
-          ? 'デジタルトランスフォーメーションに積極的に取り組まれている'
-          : topNews.title.includes('データ') || topNews.title.includes('AI')
-          ? 'データ活用・AI導入を推進されている'
-          : topNews.title.includes('中期') || topNews.title.includes('経営')
-          ? '中期経営計画でデータドリブン経営を掲げていらっしゃる'
-          : topNews.title.includes('クラウド') || topNews.title.includes('システム')
-          ? 'システムのクラウド化・刷新を進めていらっしゃる'
-          : '業務効率化やデータ活用に力を入れていらっしゃる'
-      }という印象を受けました。
+    ? `記事を拝見する中で、${companyName}様が${getNewsFeature(topNews.title)}という印象を受けました。${secondNews ? `
 
-${secondNews ? `また、「${secondNews.title}」という記事からも、データを活用した意思決定の重要性を認識されていると感じております。` : ''}`
-    : `${companyName}様は${industryLabel}のリーディングカンパニーとして、データ活用や業務効率化に積極的に取り組まれていると伺っております。`;
+また、「${secondNews.title}」という記事からも、データを活用した意思決定の重要性を認識されていると感じております。` : ''}`
+    : `${companyName}様は${estimatedIndustry}のリーディングカンパニーとして、業務効率化やデータ活用に積極的に取り組まれていると伺っております。`;
 
   // ===== ⑤ 類似企業を名乗る（AIが生成） =====
-  const script5 = `弊社、丁度直近で${industryLabel}の「${bestCase.companyName}」様、「${secondCase.companyName}」様にご導入いただいております。`;
+  const script5 = caseStudies.length >= 2
+    ? `弊社、丁度直近で「${bestCase.companyName}」様、「${secondCase.companyName}」様にご導入いただいております。`
+    : caseStudies.length === 1
+    ? `弊社、直近で「${bestCase.companyName}」様にご導入いただいております。`
+    : `弊社、多くの企業様にご導入いただいております。`;
 
-  // ===== ⑥ 課題とDOMOの効果（AIが生成） =====
+  // ===== ⑥ 課題と効果（AIが生成） =====
   const script6 = `${bestCase.companyName}様では、「${bestCase.challenge}」という課題をお持ちでした。
 
 具体的には、
@@ -73,7 +54,7 @@ ${secondNews ? `また、「${secondNews.title}」という記事からも、デ
 ・部門間でのデータの整合性が取れない
 といった状況でした。
 
-DOMOを導入されたことで、
+${config.productName}を導入されたことで、
 ・データの自動連携により集約作業がゼロに
 ・${bestCase.result}
 ・経営ダッシュボードでリアルタイムにKPIを可視化
@@ -82,13 +63,13 @@ DOMOを導入されたことで、
 
 ${companyName}様でも、同様の課題をお感じでしたら、具体的な改善シナリオをご提案できます。
 
-よろしければ、1時間程度のオンラインデモで、実際の画面をお見せしながらご説明させていただけませんでしょうか？`;
+よろしければ、${config.meetingDuration}程度のオンラインデモで、実際の画面をお見せしながらご説明させていただけませんでしょうか？`;
 
   // 日程調整トーク
   const scheduleScript = `ありがとうございます！
 
-それでは、1時間のお打ち合わせということで、来週のご都合はいかがでしょうか？
-例えば、○月○日（火）の14時〜15時、または○月○日（木）の15時〜16時はいかがでしょうか？
+それでは、${config.meetingDuration}のお打ち合わせということで、来週のご都合はいかがでしょうか？
+例えば、○月○日（火）の14時〜、または○月○日（木）の15時〜はいかがでしょうか？
 
 当日は私と弊社のソリューションコンサルタントで対応させていただきます。
 
@@ -98,26 +79,28 @@ ${companyName}様でも、同様の課題をお感じでしたら、具体的な
 ・メールアドレス
 をお教えいただけますでしょうか？`;
 
+  const agendaText = config.meetingAgenda && config.meetingAgenda.length > 0
+    ? config.meetingAgenda.map((item, i) => `・${item}`).join('\n')
+    : `・製品紹介（15分）\n・デモ（30分）\n・質疑応答（15分）`;
+
   const appointmentConfirmScript = `ありがとうございます！
 
-○月○日（○曜日）○時〜○時の1時間で確定させていただきます。
+○月○日（○曜日）○時〜の${config.meetingDuration}で確定させていただきます。
 本日中にカレンダー招待をお送りいたします。
 
 当日のアジェンダとしては、
-・DOMO製品のご紹介（15分）
-・${companyName}様の課題に合わせたデモ（30分）
-・質疑応答・ディスカッション（15分）
+${agendaText}
 を予定しております。
 
 当日は、${companyName}様の課題解決に向けた具体的なご提案をさせていただきます。
 本日はお時間いただきありがとうございました。`;
 
   // 反論ノード生成
-  const objectionNodes: TalkNode[] = objectionHandlers.map((handler) => ({
+  const objectionNodes: TalkNode[] = config.objectionHandlers.map((handler) => ({
     id: `objection-${handler.type}`,
     type: 'objection',
     label: handler.label,
-    script: replaceTemplateVars(handler.response, { ...templateVars, companyName: bestCase.companyName }),
+    script: handler.response,
     tips: handler.followUp,
     children: {
       yes: {
@@ -152,7 +135,7 @@ ${companyName}様のタイミングが合いましたら、ぜひまたお声が
     type: 'start',
     label: '① 冒頭挨拶',
     script: script1,
-    tips: '明るくハキハキと。社名は「ドーモ」と伝える',
+    tips: `明るくハキハキと。社名は「${config.productNameKana || config.productName}」と伝える`,
     children: {
       yes: {
         id: 'step2',
@@ -164,9 +147,9 @@ ${companyName}様のタイミングが合いましたら、ぜひまたお声が
           yes: {
             id: 'step3',
             type: 'yes',
-            label: '③ DOMO紹介',
+            label: '③ 製品紹介',
             script: script3,
-            tips: '簡潔に。アメリカ発のグローバル企業であることを伝える',
+            tips: '簡潔に。特徴を伝える',
             children: {
               yes: {
                 id: 'step4',
@@ -230,11 +213,66 @@ ${companyName}様のタイミングが合いましたら、ぜひまたお声が
     },
   };
 
+  // 業界にマッチした事例を取得
+  const matchedCases = getMatchedCases(caseStudies, estimatedIndustry);
+
   const companyInfo: CompanyInfo = {
     name: companyName,
-    estimatedIndustry: industry,
+    estimatedIndustry: estimatedIndustry as any,
     news: news || [],
   };
 
   return { tree, matchedCases, companyInfo };
+}
+
+function getDefaultCase(productName: string): CaseStudy {
+  return {
+    id: 'default',
+    companyName: '導入企業',
+    industry: 'その他',
+    challenge: 'データ活用に課題があった',
+    solution: productName + 'を導入',
+    result: '業務効率化を実現',
+    url: '',
+  };
+}
+
+function estimateIndustryFromName(companyName: string, targetIndustries: string[]): string {
+  const industryKeywords: Record<string, string[]> = {
+    '通信': ['通信', 'テレコム', 'ソフトバンク', 'KDDI', 'NTT', 'ドコモ', '楽天モバイル'],
+    'IT': ['IT', 'システム', 'ソフトウェア', 'テクノロジー', 'データ', 'AI', 'クラウド'],
+    '製造': ['製造', 'メーカー', '自動車', '電機', '機械', 'トヨタ', 'ホンダ', 'パナソニック', 'ソニー'],
+    '金融': ['銀行', '証券', '保険', '金融', 'ファイナンス', 'UFJ', 'みずほ', '三井住友'],
+    '小売': ['小売', '流通', '百貨店', 'コンビニ', 'スーパー', 'イオン', 'セブン', 'ユニクロ'],
+  };
+
+  for (const [industry, keywords] of Object.entries(industryKeywords)) {
+    for (const keyword of keywords) {
+      if (companyName.includes(keyword)) {
+        return industry;
+      }
+    }
+  }
+
+  return targetIndustries[0] || 'その他';
+}
+
+function getNewsFeature(title: string): string {
+  if (title.includes('DX') || title.includes('デジタル')) {
+    return 'デジタルトランスフォーメーションに積極的に取り組まれている';
+  } else if (title.includes('データ') || title.includes('AI')) {
+    return 'データ活用・AI導入を推進されている';
+  } else if (title.includes('中期') || title.includes('経営')) {
+    return '中期経営計画でデータドリブン経営を掲げていらっしゃる';
+  } else if (title.includes('クラウド') || title.includes('システム')) {
+    return 'システムのクラウド化・刷新を進めていらっしゃる';
+  }
+  return '業務効率化やデータ活用に力を入れていらっしゃる';
+}
+
+function getMatchedCases(caseStudies: CaseStudy[], industry: string): CaseStudy[] {
+  // 同じ業界の事例を優先
+  const matched = caseStudies.filter(c => c.industry === industry);
+  const others = caseStudies.filter(c => c.industry !== industry);
+  return [...matched, ...others].slice(0, 3);
 }
