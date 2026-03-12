@@ -9,15 +9,8 @@ interface TalkTreeProps {
   onSelectNode: (node: TalkNode) => void;
 }
 
-interface Branch {
-  label: string;
-  color: string;
-  node: TalkNode;
-}
-
 export default function TalkTree({ tree, selectedNode, onSelectNode }: TalkTreeProps) {
   const [isOpen, setIsOpen] = useState(true);
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['step6']));
 
   // ⑥以降のツリー（お断り分岐）を取得
   const getObjectionTree = (): TalkNode | null => {
@@ -33,116 +26,140 @@ export default function TalkTree({ tree, selectedNode, onSelectNode }: TalkTreeP
 
   const objectionTreeRoot = getObjectionTree();
 
-  const toggleExpand = (nodeId: string) => {
-    setExpandedNodes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(nodeId)) {
-        newSet.delete(nodeId);
-      } else {
-        newSet.add(nodeId);
-      }
-      return newSet;
-    });
-  };
-
   const handleNodeClick = (node: TalkNode) => {
     onSelectNode(node);
-    // 子ノードがある場合は展開/折りたたみ
-    const hasChildren = node.children?.yes || node.children?.no || (node.children?.objections && node.children.objections.length > 0);
-    if (hasChildren) {
-      toggleExpand(node.id);
+  };
+
+  const getNodeTypeClass = (type: string) => {
+    switch (type) {
+      case 'schedule': return 'node-schedule';
+      case 'yes': return 'node-success';
+      case 'no': return 'node-danger';
+      case 'objection': return 'node-warning';
+      default: return 'node-default';
     }
   };
 
-  const renderNode = (node: TalkNode, path: string = 'root', depth: number = 0): React.ReactNode => {
-    const isSelected = selectedNode?.id === node.id;
-    const isExpanded = expandedNodes.has(node.id);
+  // 3段階のツリー構造をレンダリング
+  const renderTreeStructure = () => {
+    if (!objectionTreeRoot) return null;
 
-    // 子ノードを収集
-    const branches: Branch[] = [];
-    if (node.children?.yes) {
-      branches.push({ label: 'YES', color: '#22c55e', node: node.children.yes });
-    }
-    if (node.children?.no) {
-      branches.push({ label: 'NO', color: '#ef4444', node: node.children.no });
-    }
-    if (node.children?.objections) {
-      node.children.objections.forEach((obj) => {
-        branches.push({ label: obj.label, color: '#f97316', node: obj });
-      });
-    }
-
-    const hasBranches = branches.length > 0;
+    const yesNode = objectionTreeRoot.children?.yes;
+    const noNode = objectionTreeRoot.children?.no;
 
     return (
-      <div key={path} className="tree-row">
-        {/* ノードボックス */}
-        <div
-          onClick={() => handleNodeClick(node)}
-          className={`tree-node ${isSelected ? 'tree-node-selected' : ''} ${hasBranches ? 'tree-node-expandable' : ''}`}
-        >
-          <div className="tree-node-header">
-            <div className="tree-node-title">{node.label}</div>
-            {hasBranches && (
-              <div className={`tree-node-expand ${isExpanded ? 'expanded' : ''}`}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </div>
-            )}
+      <div className="visual-tree">
+        {/* Level 1: Root Node */}
+        <div className="tree-level tree-level-1">
+          <div
+            className={`tree-card tree-card-root ${selectedNode?.id === objectionTreeRoot.id ? 'selected' : ''}`}
+            onClick={() => handleNodeClick(objectionTreeRoot)}
+          >
+            <div className="tree-card-label">{objectionTreeRoot.label}</div>
+            <div className="tree-card-preview">{objectionTreeRoot.script.slice(0, 40)}...</div>
           </div>
-          <div className="tree-node-text">{node.script.slice(0, 60)}...</div>
-          {hasBranches && (
-            <div className="tree-node-badge">
-              {branches.length}つの分岐
+        </div>
+
+        {/* Connector from Level 1 to Level 2 */}
+        <div className="tree-connector">
+          <div className="tree-connector-line"></div>
+          <div className="tree-connector-split"></div>
+        </div>
+
+        {/* Level 2: YES/NO Branches */}
+        <div className="tree-level tree-level-2">
+          {/* YES Branch */}
+          {yesNode && (
+            <div className="tree-branch-group tree-branch-yes">
+              <div className="tree-branch-label-top yes">YES</div>
+              <div
+                className={`tree-card tree-card-yes ${selectedNode?.id === yesNode.id ? 'selected' : ''}`}
+                onClick={() => handleNodeClick(yesNode)}
+              >
+                <div className="tree-card-label">{yesNode.label}</div>
+                <div className="tree-card-preview">{yesNode.script.slice(0, 30)}...</div>
+              </div>
+
+              {/* Level 3 from YES */}
+              {yesNode.children?.yes && (
+                <>
+                  <div className="tree-connector-down">
+                    <div className="tree-connector-arrow yes"></div>
+                  </div>
+                  <div
+                    className={`tree-card tree-card-success ${selectedNode?.id === yesNode.children.yes.id ? 'selected' : ''}`}
+                    onClick={() => handleNodeClick(yesNode.children!.yes!)}
+                  >
+                    <div className="tree-card-icon">✓</div>
+                    <div className="tree-card-label">{yesNode.children.yes.label}</div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* NO Branch */}
+          {noNode && (
+            <div className="tree-branch-group tree-branch-no">
+              <div className="tree-branch-label-top no">NO</div>
+              <div
+                className={`tree-card tree-card-no ${selectedNode?.id === noNode.id ? 'selected' : ''}`}
+                onClick={() => handleNodeClick(noNode)}
+              >
+                <div className="tree-card-label">{noNode.label}</div>
+                <div className="tree-card-preview">{noNode.script.slice(0, 30)}...</div>
+              </div>
+
+              {/* Level 3: Objection handlers */}
+              {noNode.children?.objections && noNode.children.objections.length > 0 && (
+                <>
+                  <div className="tree-connector-down">
+                    <div className="tree-connector-arrow no"></div>
+                  </div>
+                  <div className="tree-objection-grid">
+                    {noNode.children.objections.map((obj, idx) => (
+                      <div key={idx} className="tree-objection-item">
+                        <div
+                          className={`tree-card tree-card-objection ${selectedNode?.id === obj.id ? 'selected' : ''}`}
+                          onClick={() => handleNodeClick(obj)}
+                        >
+                          <div className="tree-card-label">{obj.label}</div>
+                        </div>
+
+                        {/* Sub-branches for each objection */}
+                        <div className="tree-objection-branches">
+                          {obj.children?.yes && (
+                            <div
+                              className={`tree-mini-card yes ${selectedNode?.id === obj.children.yes.id ? 'selected' : ''}`}
+                              onClick={() => handleNodeClick(obj.children!.yes!)}
+                            >
+                              <span className="tree-mini-label">→ {obj.children.yes.label}</span>
+                            </div>
+                          )}
+                          {obj.children?.no && (
+                            <div
+                              className={`tree-mini-card no ${selectedNode?.id === obj.children.no.id ? 'selected' : ''}`}
+                              onClick={() => handleNodeClick(obj.children!.no!)}
+                            >
+                              <span className="tree-mini-label">→ {obj.children.no.label}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
-
-        {/* 分岐がある場合（展開時のみ表示） */}
-        {hasBranches && isExpanded && (
-          <div className="tree-branch-container animate-in">
-            {/* 親からの横線 */}
-            <div className="tree-hline" />
-
-            {/* 縦線と分岐 */}
-            <div className="tree-vline-container">
-              {/* 縦線 */}
-              {branches.length > 1 && <div className="tree-vline" />}
-
-              {/* 各分岐 */}
-              <div className="tree-branches">
-                {branches.map((branch, idx) => (
-                  <div key={idx} className="tree-branch">
-                    {/* 横線 + ラベル + 矢印 */}
-                    <div className="tree-branch-line">
-                      <span
-                        className="tree-branch-label"
-                        style={{ color: branch.color }}
-                      >
-                        {branch.label}
-                      </span>
-                      <div className="tree-arrow-line" />
-                      <div
-                        className="tree-arrow"
-                        style={{ borderLeftColor: branch.color }}
-                      />
-                    </div>
-                    {/* 子ノード */}
-                    {renderNode(branch.node, `${path}-${idx}`, depth + 1)}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   };
 
   return (
     <div className="tree-panel animate-in">
-      {/* ヘッダー（クリックで開閉） */}
+      {/* ヘッダー */}
       <div className="tree-header" onClick={() => setIsOpen(!isOpen)}>
         <div className="tree-header-left">
           <div className="tree-icon">
@@ -152,7 +169,7 @@ export default function TalkTree({ tree, selectedNode, onSelectNode }: TalkTreeP
           </div>
           <div>
             <h3 className="tree-title">トークツリー</h3>
-            <p className="tree-subtitle">⑥以降 お断り対応フロー（クリックで展開）</p>
+            <p className="tree-subtitle">⑥以降 お断り対応フロー</p>
           </div>
         </div>
         <div className="tree-header-right">
@@ -164,10 +181,10 @@ export default function TalkTree({ tree, selectedNode, onSelectNode }: TalkTreeP
         </div>
       </div>
 
-      {/* ツリーコンテンツ（トグル） */}
+      {/* ツリーコンテンツ */}
       <div className={`tree-content ${isOpen ? 'open' : ''}`}>
         <div className="tree-scroll">
-          {objectionTreeRoot && renderNode(objectionTreeRoot)}
+          {renderTreeStructure()}
         </div>
 
         {/* スクリプト表示エリア */}
