@@ -2,34 +2,127 @@ import * as XLSX from 'xlsx';
 import { ProjectConfig, CaseStudy, ObjectionHandler } from '@/types';
 
 export function parseProjectExcel(file: ArrayBuffer): ProjectConfig {
-  const workbook = XLSX.read(file, { type: 'array' });
+  try {
+    const workbook = XLSX.read(file, { type: 'array' });
 
-  // 製品情報シート
-  const productSheet = workbook.Sheets['製品情報'] || workbook.Sheets[workbook.SheetNames[0]];
-  const productData = XLSX.utils.sheet_to_json<string[]>(productSheet, { header: 1 }) as string[][];
+    // 製品情報シート
+    const productSheet = workbook.Sheets['製品情報'] || workbook.Sheets[workbook.SheetNames[0]];
+    const productData = productSheet ? XLSX.utils.sheet_to_json<string[]>(productSheet, { header: 1 }) as string[][] : [];
 
-  // 導入事例シート
-  const caseSheet = workbook.Sheets['導入事例'] || workbook.Sheets[workbook.SheetNames[1]];
-  const caseData = caseSheet ? XLSX.utils.sheet_to_json<Record<string, string>>(caseSheet) : [];
+    // 導入事例シート（特殊形式に対応）
+    const caseSheet = workbook.Sheets['導入事例'] || workbook.Sheets[workbook.SheetNames[1]];
+    const caseRawData = caseSheet ? XLSX.utils.sheet_to_json<string[]>(caseSheet, { header: 1 }) as (string | null)[][] : [];
 
-  // 反論対応シート
-  const objectionSheet = workbook.Sheets['反論対応'] || workbook.Sheets[workbook.SheetNames[2]];
-  const objectionData = objectionSheet ? XLSX.utils.sheet_to_json<Record<string, string>>(objectionSheet) : [];
+    // 反論対応シート
+    const objectionSheet = workbook.Sheets['反論対応'] || workbook.Sheets[workbook.SheetNames[2]];
+    const objectionData = objectionSheet ? XLSX.utils.sheet_to_json<Record<string, string>>(objectionSheet) : [];
 
-  // 製品情報をパース
-  const productInfo = parseProductInfo(productData);
+    // 製品情報をパース
+    const productInfo = parseProductInfo(productData);
+
+    // 導入事例シートから追加情報を抽出
+    const caseSheetInfo = parseCaseSheetInfo(caseRawData);
+
+    // 導入事例をパース（新形式対応）
+    const caseStudies = parseCaseStudiesNewFormat(caseRawData, caseSheetInfo.mainFeatures);
+
+    // 反論対応をパース
+    const objectionHandlers = parseObjectionHandlers(objectionData);
+
+    return {
+      ...productInfo,
+      productDescription: caseSheetInfo.domoIntro || productInfo.productDescription,
+      keyFeatures: caseSheetInfo.mainFeatures ? [caseSheetInfo.mainFeatures] : productInfo.keyFeatures,
+      caseStudies,
+      objectionHandlers: objectionHandlers.length > 0 ? objectionHandlers : getDefaultObjectionHandlers(productInfo.productName),
+      // 追加の情報
+      competitiveDiff: caseSheetInfo.competitiveDiff,
+    } as ProjectConfig;
+  } catch (error) {
+    console.error('Excel parsing error:', error);
+    // エラー時はデフォルト設定を返す
+    return getDefaultProjectConfig();
+  }
+}
+
+// 導入事例シートから紹介文、主な特徴、競合差別化を抽出
+function parseCaseSheetInfo(data: (string | null)[][]): {
+  domoIntro: string;
+  mainFeatures: string;
+  competitiveDiff: string;
+} {
+  let domoIntro = '';
+  let mainFeatures = '';
+  let competitiveDiff = '';
+
+  for (let i = 0; i < Math.min(data.length, 10); i++) {
+    const row = data[i];
+    if (!row || row.length === 0) continue;
+
+    const firstCell = String(row[0] || '');
+
+    // DOMO紹介文の次の行
+    if (firstCell === 'Domo紹介文' && data[i + 1]) {
+      domoIntro = String(data[i + 1][0] || '');
+    }
+    // 主な特徴の次の行
+    if (firstCell === '主な特徴' && data[i + 1]) {
+      mainFeatures = String(data[i + 1][0] || '');
+    }
+    // 競合ツールとの差別化の次の行
+    if (firstCell === '競合ツールとの差別化' && data[i + 1]) {
+      competitiveDiff = String(data[i + 1][0] || '');
+    }
+  }
+
+  return { domoIntro, mainFeatures, competitiveDiff };
+}
+
+// 新形式の導入事例をパース（業界, 企業名, 具体 の形式）
+function parseCaseStudiesNewFormat(data: (string | null)[][], mainFeatures: string): CaseStudy[] {
+  const cases: CaseStudy[] = [];
+  let currentIndustry = '';
+
+  // ヘッダー行を探す
+  let startRow = 0;
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    if (row && row[0] && String(row[0]).includes('導入事例') && String(row[1]) === '企業名') {
+      startRow = i + 1;
+      break;
+    }
+  }
 
   // 導入事例をパース
-  const caseStudies = parseCaseStudies(caseData);
+  for (let i = startRow; i < data.length; i++) {
+    const row = data[i];
+    if (!row || row.length < 2) continue;
 
-  // 反論対応をパース
-  const objectionHandlers = parseObjectionHandlers(objectionData);
+    // 業界（nullの場合は前の業界を継承）
+    if (row[0]) {
+      currentIndustry = String(row[0]);
+    }
 
-  return {
-    ...productInfo,
-    caseStudies,
-    objectionHandlers: objectionHandlers.length > 0 ? objectionHandlers : getDefaultObjectionHandlers(productInfo.productName),
-  };
+    // 企業名
+    const companyName = row[1] ? String(row[1]) : '';
+    if (!companyName) continue;
+
+    // 具体的な内容
+    const details = row[2] ? String(row[2]) : '';
+
+    cases.push({
+      id: 'case-' + (cases.length + 1),
+      companyName: companyName,
+      industry: currentIndustry,
+      challenge: details,
+      solution: '',
+      result: details,
+      url: '',
+      mainFeatures: mainFeatures,
+    });
+  }
+
+  return cases;
 }
 
 function parseProductInfo(data: string[][]): Omit<ProjectConfig, 'caseStudies' | 'objectionHandlers'> {
@@ -68,7 +161,11 @@ function parseCaseStudies(data: Record<string, string>[]): CaseStudy[] {
     result: row['成果'] || row['効果'] || row['導入効果'] || '',
     quote: row['お客様の声'] || row['コメント'],
     url: row['URL'] || row['事例URL'] || row['リンク'] || '',
-  })).filter(c => c.companyName && c.challenge);
+    // 新しいフィールド
+    companyFeatures: row['会社特徴'] || row['企業特徴'] || row['特徴'] || '',
+    mainFeatures: row['主な特徴'] || row['製品特徴'] || row['機能特徴'] || '',
+    competitors: row['競合'] || row['競合他社'] || row['競合製品'] || '',
+  })).filter(c => c.companyName);
 }
 
 function parseObjectionHandlers(data: Record<string, string>[]): ObjectionHandler[] {
@@ -155,13 +252,13 @@ export function generateTemplateExcel(): Blob {
 
   // 導入事例シート
   const caseData = [
-    ['企業名', '業界', '課題', '成果', 'URL'],
-    ['パナソニック', '製造', '複数の事業部門にまたがるデータの統合と可視化が困難だった', 'データドリブンな意思決定が可能になり、レポート作成時間を80%削減', 'https://www.domo.com/jp/customers/panasonic'],
-    ['KDDI', '通信', '膨大な顧客データと通信データの分析に時間がかかっていた', '顧客行動の即時把握が可能になり、解約率を15%改善', 'https://www.domo.com/jp/customers/kddi'],
-    ['ソフトバンク', '通信', '多角化した事業のKPI管理が複雑化していた', '経営会議の準備時間を90%削減、リアルタイム経営を実現', 'https://www.domo.com/jp/customers/softbank'],
+    ['企業名', '業界', '課題', '成果', '会社特徴', '主な特徴', '競合', 'URL'],
+    ['パナソニック', '製造', '複数の事業部門にまたがるデータの統合と可視化が困難だった', 'データドリブンな意思決定が可能になり、レポート作成時間を80%削減', '総合電機メーカーとしてグローバル展開', 'データ連携1000種類以上、リアルタイム可視化', 'Tableau, Power BI', 'https://www.domo.com/jp/customers/panasonic'],
+    ['KDDI', '通信', '膨大な顧客データと通信データの分析に時間がかかっていた', '顧客行動の即時把握が可能になり、解約率を15%改善', '携帯通信事業を中心に多角化経営', '大量データ処理、モバイル対応ダッシュボード', 'Salesforce, SAP', 'https://www.domo.com/jp/customers/kddi'],
+    ['ソフトバンク', '通信', '多角化した事業のKPI管理が複雑化していた', '経営会議の準備時間を90%削減、リアルタイム経営を実現', 'IT・通信・投資など多角的事業展開', '全社KPI一元管理、アラート機能', 'Microsoft Power BI', 'https://www.domo.com/jp/customers/softbank'],
   ];
   const caseSheet = XLSX.utils.aoa_to_sheet(caseData);
-  caseSheet['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 40 }, { wch: 40 }, { wch: 50 }];
+  caseSheet['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 40 }, { wch: 40 }, { wch: 30 }, { wch: 30 }, { wch: 20 }, { wch: 50 }];
   XLSX.utils.book_append_sheet(workbook, caseSheet, '導入事例');
 
   // 反論対応シート

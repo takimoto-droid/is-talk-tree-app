@@ -6,11 +6,16 @@ export function generateTalkTree(
   news?: NewsItem[]
 ): GenerateTreeResponse {
   const caseStudies = config.caseStudies;
-  const bestCase = caseStudies[0] || getDefaultCase(config.productName);
-  const secondCase = caseStudies[1] || caseStudies[0] || getDefaultCase(config.productName);
 
   // 業界を推定
   const estimatedIndustry = estimateIndustryFromName(companyName, config.targetIndustries);
+
+  // 業界にマッチした事例を取得（改善版）
+  const matchedCases = getMatchedCasesByIndustry(caseStudies, estimatedIndustry, companyName);
+
+  // マッチした事例から最適なケースを選択
+  const bestCase = matchedCases[0] || getDefaultCase(config.productName);
+  const secondCase = matchedCases[1] || matchedCases[0] || getDefaultCase(config.productName);
 
   // ニュースから最も関連度の高い記事を取得
   const topNews = news && news.length > 0 ? news[0] : null;
@@ -38,13 +43,19 @@ ${config.targetIndustries.length > 0 ? config.targetIndustries.slice(0, 3).join(
     : `${companyName}様は${estimatedIndustry}のリーディングカンパニーとして、業務効率化やデータ活用に積極的に取り組まれていると伺っております。`;
 
   // ===== ⑤ 類似企業を名乗る（AIが生成） =====
+  const companyFeatureText = bestCase.companyFeatures
+    ? `\n\n${bestCase.companyName}様は${bestCase.companyFeatures}という特徴がある企業様です。`
+    : '';
   const script5 = caseStudies.length >= 2
-    ? `弊社、丁度直近で「${bestCase.companyName}」様、「${secondCase.companyName}」様にご導入いただいております。`
+    ? `弊社、丁度直近で「${bestCase.companyName}」様、「${secondCase.companyName}」様にご導入いただいております。${companyFeatureText}`
     : caseStudies.length === 1
-    ? `弊社、直近で「${bestCase.companyName}」様にご導入いただいております。`
+    ? `弊社、直近で「${bestCase.companyName}」様にご導入いただいております。${companyFeatureText}`
     : `弊社、多くの企業様にご導入いただいております。`;
 
   // ===== ⑥ 課題と効果（AIが生成） =====
+  const mainFeaturesText = bestCase.mainFeatures
+    ? `\n【${config.productName}の主な特徴】\n${bestCase.mainFeatures}\n`
+    : '';
   const script6 = `${bestCase.companyName}様では、「${bestCase.challenge}」という課題をお持ちでした。
 
 具体的には、
@@ -54,7 +65,7 @@ ${config.targetIndustries.length > 0 ? config.targetIndustries.slice(0, 3).join(
 ・部門間でのデータの整合性が取れない
 といった状況でした。
 
-${config.productName}を導入されたことで、
+${config.productName}を導入されたことで、${mainFeaturesText}
 ・データの自動連携により集約作業がゼロに
 ・${bestCase.result}
 ・経営ダッシュボードでリアルタイムにKPIを可視化
@@ -213,9 +224,6 @@ ${companyName}様のタイミングが合いましたら、ぜひまたお声が
     },
   };
 
-  // 業界にマッチした事例を取得
-  const matchedCases = getMatchedCases(caseStudies, estimatedIndustry);
-
   const companyInfo: CompanyInfo = {
     name: companyName,
     estimatedIndustry: estimatedIndustry as any,
@@ -238,22 +246,30 @@ function getDefaultCase(productName: string): CaseStudy {
 }
 
 function estimateIndustryFromName(companyName: string, targetIndustries: string[]): string {
+  const name = companyName.toLowerCase();
+
   const industryKeywords: Record<string, string[]> = {
-    '通信': ['通信', 'テレコム', 'ソフトバンク', 'KDDI', 'NTT', 'ドコモ', '楽天モバイル'],
-    'IT': ['IT', 'システム', 'ソフトウェア', 'テクノロジー', 'データ', 'AI', 'クラウド'],
-    '製造': ['製造', 'メーカー', '自動車', '電機', '機械', 'トヨタ', 'ホンダ', 'パナソニック', 'ソニー'],
-    '金融': ['銀行', '証券', '保険', '金融', 'ファイナンス', 'UFJ', 'みずほ', '三井住友'],
-    '小売': ['小売', '流通', '百貨店', 'コンビニ', 'スーパー', 'イオン', 'セブン', 'ユニクロ'],
+    '通信': ['通信', 'テレコム', 'ソフトバンク', 'kddi', 'ntt', 'ドコモ', 'docomo', '楽天モバイル', 'au', 'モバイル'],
+    'IT': ['it', 'システム', 'ソフトウェア', 'テクノロジー', 'データ', 'ai', 'クラウド', 'デジタル', 'web', 'インターネット', 'サイバー', 'テック'],
+    '製造': ['製造', 'メーカー', '自動車', '電機', '機械', 'トヨタ', 'toyota', 'ホンダ', 'honda', 'パナソニック', 'panasonic', 'ソニー', 'sony', '日立', 'hitachi', '工業', '重工', '電子', '部品'],
+    '金融': ['銀行', '証券', '保険', '金融', 'ファイナンス', 'ufj', 'みずほ', '三井住友', 'smbc', '信託', 'リース', 'カード', '投資', 'キャピタル'],
+    '小売': ['小売', '流通', '百貨店', 'コンビニ', 'スーパー', 'イオン', 'セブン', 'ユニクロ', 'アマゾン', 'amazon', '楽天', 'ec', '通販', 'ストア', 'マート'],
+    'コンサル': ['コンサル', 'コンサルティング', '総研', '研究所', 'シンクタンク', 'アクセンチュア', 'デロイト', 'pwc', 'マッキンゼー'],
+    'メディア': ['メディア', '広告', '放送', '出版', 'テレビ', 'tv', '新聞', 'ニュース', 'エンターテイメント', 'エンタメ', '電通', '博報堂'],
+    '不動産': ['不動産', '建設', '住宅', 'ディベロッパー', '建築', 'ハウス', 'ホーム', '地所', '信託'],
+    '医療': ['医療', '製薬', 'ヘルスケア', '病院', '薬', 'ファーマ', 'バイオ', 'メディカル'],
+    'サービス': ['サービス', '人材', '旅行', 'ホテル', '飲食', 'フード', 'レストラン', 'jtb', 'リクルート'],
   };
 
   for (const [industry, keywords] of Object.entries(industryKeywords)) {
     for (const keyword of keywords) {
-      if (companyName.includes(keyword)) {
+      if (name.includes(keyword.toLowerCase())) {
         return industry;
       }
     }
   }
 
+  // targetIndustriesがExcelから読み込まれた業界リストの場合、最初のものを返す
   return targetIndustries[0] || 'その他';
 }
 
@@ -270,9 +286,133 @@ function getNewsFeature(title: string): string {
   return '業務効率化やデータ活用に力を入れていらっしゃる';
 }
 
-function getMatchedCases(caseStudies: CaseStudy[], industry: string): CaseStudy[] {
-  // 同じ業界の事例を優先
-  const matched = caseStudies.filter(c => c.industry === industry);
-  const others = caseStudies.filter(c => c.industry !== industry);
-  return [...matched, ...others].slice(0, 3);
+// 業界マッチングの類似度を計算
+function calculateIndustrySimilarity(caseIndustry: string, targetIndustry: string): number {
+  if (!caseIndustry || !targetIndustry) return 0;
+
+  const caseInd = caseIndustry.toLowerCase();
+  const targetInd = targetIndustry.toLowerCase();
+
+  // 完全一致
+  if (caseInd === targetInd) return 100;
+
+  // 部分一致
+  if (caseInd.includes(targetInd) || targetInd.includes(caseInd)) return 80;
+
+  // 業界グループによるマッチング
+  const industryGroups: Record<string, string[]> = {
+    '通信・IT': ['通信', 'it', 'テクノロジー', 'ソフトウェア', 'システム', 'デジタル', 'インターネット', 'web', 'クラウド'],
+    '製造': ['製造', 'メーカー', '電機', '機械', '自動車', '工業', 'エレクトロニクス', '電子', '部品'],
+    '金融': ['金融', '銀行', '証券', '保険', 'ファイナンス', '投資', 'リース', 'カード'],
+    '小売・流通': ['小売', '流通', '百貨店', 'スーパー', 'コンビニ', 'ec', 'eコマース', '通販'],
+    'コンサル': ['コンサル', 'コンサルティング', '総研', '研究所', 'シンクタンク'],
+    'メディア': ['メディア', '広告', '放送', '出版', 'エンターテイメント', '映像', 'マーケティング'],
+    '不動産': ['不動産', '建設', '住宅', 'ディベロッパー', '建築'],
+    '医療・ヘルスケア': ['医療', '製薬', 'ヘルスケア', '病院', '薬', 'バイオ'],
+    'サービス': ['サービス', '人材', '旅行', 'ホテル', '飲食', 'フード'],
+  };
+
+  // 両方の業界が同じグループに属しているかチェック
+  for (const [group, keywords] of Object.entries(industryGroups)) {
+    const caseInGroup = keywords.some(kw => caseInd.includes(kw));
+    const targetInGroup = keywords.some(kw => targetInd.includes(kw));
+
+    if (caseInGroup && targetInGroup) {
+      return 60;
+    }
+  }
+
+  // キーワード部分一致
+  const caseWords = caseInd.split(/[・\s\/]/);
+  const targetWords = targetInd.split(/[・\s\/]/);
+
+  for (const cw of caseWords) {
+    for (const tw of targetWords) {
+      if (cw.length > 1 && tw.length > 1 && (cw.includes(tw) || tw.includes(cw))) {
+        return 40;
+      }
+    }
+  }
+
+  return 0;
+}
+
+// 企業名からの類似度を計算
+function calculateCompanySimilarity(caseCompanyName: string, targetCompanyName: string): number {
+  if (!caseCompanyName || !targetCompanyName) return 0;
+
+  const caseName = caseCompanyName.toLowerCase();
+  const targetName = targetCompanyName.toLowerCase();
+
+  // 同じ企業名の場合は除外（自社は参照しない）
+  if (caseName === targetName) return -100;
+
+  // 企業グループキーワード
+  const companyGroups: string[][] = [
+    ['ソフトバンク', 'yahoo', 'ヤフー', 'line', 'ライン', 'paypay'],
+    ['ntt', 'ドコモ', 'docomo', 'データ', 'コミュニケーションズ'],
+    ['kddi', 'au', 'jcom'],
+    ['楽天', 'rakuten'],
+    ['トヨタ', 'toyota', 'レクサス', 'デンソー'],
+    ['ホンダ', 'honda', 'アキュラ'],
+    ['ソニー', 'sony', 'プレイステーション'],
+    ['パナソニック', 'panasonic', 'ナショナル'],
+    ['三菱', 'mitsubishi'],
+    ['三井', 'mitsui'],
+    ['住友', 'sumitomo'],
+    ['日立', 'hitachi'],
+  ];
+
+  // 同じ企業グループに属しているか
+  for (const group of companyGroups) {
+    const caseInGroup = group.some(kw => caseName.includes(kw.toLowerCase()));
+    const targetInGroup = group.some(kw => targetName.includes(kw.toLowerCase()));
+
+    if (caseInGroup && targetInGroup) {
+      return 30; // 同じグループは少し加点
+    }
+  }
+
+  return 0;
+}
+
+// 業界に基づいて類似事例を取得（改善版）
+function getMatchedCasesByIndustry(
+  caseStudies: CaseStudy[],
+  estimatedIndustry: string,
+  companyName: string
+): CaseStudy[] {
+  if (!caseStudies || caseStudies.length === 0) {
+    return [];
+  }
+
+  // 各事例のスコアを計算
+  const scoredCases = caseStudies.map(caseStudy => {
+    const industryScore = calculateIndustrySimilarity(caseStudy.industry, estimatedIndustry);
+    const companyScore = calculateCompanySimilarity(caseStudy.companyName, companyName);
+    const totalScore = industryScore + companyScore;
+
+    return {
+      caseStudy,
+      score: totalScore,
+      industryScore,
+      companyScore,
+    };
+  });
+
+  // スコアでソート（高い順）、同スコアの場合は元の順序を維持
+  scoredCases.sort((a, b) => b.score - a.score);
+
+  // デバッグログ（開発時のみ）
+  console.log('Industry matching results:', scoredCases.map(s => ({
+    company: s.caseStudy.companyName,
+    industry: s.caseStudy.industry,
+    score: s.score,
+  })));
+
+  // スコアが0以上の事例を返す（最大5件）
+  return scoredCases
+    .filter(s => s.score >= 0)
+    .slice(0, 5)
+    .map(s => s.caseStudy);
 }

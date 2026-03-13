@@ -23,6 +23,10 @@ export interface CaseStudy {
   result: string;
   quote?: string;
   url: string;
+  // 追加フィールド
+  companyFeatures?: string;  // 会社特徴
+  mainFeatures?: string;     // 主な特徴
+  competitors?: string;      // 競合
 }
 
 // 業界カテゴリ
@@ -109,4 +113,7 @@ export interface ProjectConfig {
 
   // 検索キーワード（ニュース優先度用）
   searchKeywords?: string[];
+
+  // 競合との差別化ポイント（Excelから読み込む）
+  competitiveDiff?: string;
 }
