@@ -21,6 +21,8 @@ export default function Home() {
   const [techSource, setTechSource] = useState<string>('');
   const [techLoading, setTechLoading] = useState(false);
   const [currentDomain, setCurrentDomain] = useState<string>('');
+  const [aiCases, setAiCases] = useState<CaseStudy[]>([]);
+  const [aiCasesLoading, setAiCasesLoading] = useState(false);
 
   const fetchNews = async (companyName: string): Promise<NewsItem[]> => {
     try {
@@ -31,6 +33,36 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to fetch news:', error);
       return [];
+    }
+  };
+
+  const fetchSimilarCases = async (companyName: string, industry: string, productName: string): Promise<void> => {
+    setAiCasesLoading(true);
+    try {
+      const response = await fetch(
+        `/api/similar-cases?company=${encodeURIComponent(companyName)}&industry=${encodeURIComponent(industry)}&product=${encodeURIComponent(productName)}`
+      );
+      if (!response.ok) throw new Error('Similar cases fetch failed');
+      const data = await response.json();
+
+      // APIレスポンスをCaseStudy形式に変換
+      const cases: CaseStudy[] = (data.cases || []).map((c: any, idx: number) => ({
+        id: `ai-case-${idx}`,
+        companyName: c.companyName,
+        industry: c.industry,
+        challenge: c.challenge,
+        solution: '',
+        result: c.result,
+        url: '',
+        source: c.source,
+      }));
+
+      setAiCases(cases);
+    } catch (error) {
+      console.error('Failed to fetch similar cases:', error);
+      setAiCases([]);
+    } finally {
+      setAiCasesLoading(false);
     }
   };
 
@@ -58,6 +90,7 @@ export default function Home() {
     if (!config) return;
 
     setIsLoading(true);
+    setAiCases([]);
 
     try {
       // ニュースを取得
@@ -67,6 +100,10 @@ export default function Home() {
       const result = generateTalkTree(companyName, config, news);
       setTreeData(result);
       setSelectedNode(result.tree);
+
+      // AIで類似企業の導入事例を検索
+      const estimatedIndustry = result.companyInfo.estimatedIndustry || '';
+      fetchSimilarCases(companyName, estimatedIndustry, config.productName);
 
       // ドメインが指定されていれば技術スタックを取得
       if (domain) {
@@ -89,6 +126,7 @@ export default function Home() {
     setTechStack([]);
     setTechSource('');
     setCurrentDomain('');
+    setAiCases([]);
   }, []);
 
   const handleChangeProject = useCallback(() => {
@@ -188,7 +226,11 @@ export default function Home() {
           {/* 上部: ニュースと類似事例 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <NewsPanel companyInfo={treeData.companyInfo} />
-            <CasePanel cases={treeData.matchedCases} onSelectCase={handleSelectCase} />
+            <CasePanel
+              cases={aiCases.length > 0 ? aiCases : treeData.matchedCases}
+              onSelectCase={handleSelectCase}
+              isLoading={aiCasesLoading}
+            />
           </div>
 
           {/* 使用ツール・技術（BuiltWith） */}
@@ -206,8 +248,8 @@ export default function Home() {
             companyName={treeData.companyInfo.name}
             industry={treeData.companyInfo.estimatedIndustry || ''}
             news={treeData.companyInfo.news || []}
-            bestCase={treeData.matchedCases[0]}
-            secondCase={treeData.matchedCases[1] || treeData.matchedCases[0]}
+            bestCase={aiCases[0] || treeData.matchedCases[0]}
+            secondCase={aiCases[1] || aiCases[0] || treeData.matchedCases[1] || treeData.matchedCases[0]}
             config={config}
           />
 
