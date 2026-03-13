@@ -43,28 +43,50 @@ async function searchCasesWithGemini(
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-  const prompt = `あなたはBIツール「${productName}（DOMO/ドーモ）」の導入事例に詳しいエキスパートです。
+  const prompt = `あなたはBIツール「DOMO（ドーモ）」の導入事例データベースです。
 
-対象企業: ${companyName}
-推定業界: ${industry || '不明'}
+【検索対象】
+企業名: ${companyName}
+業界: ${industry || '不明'}
 
-タスク:
-1. ${companyName}の業界を特定
-2. ${productName}の実際の導入事例から、${companyName}と類似した業界の企業を2〜3社見つける
-3. 各企業の導入前の課題と導入後の成果を要約
+【あなたのタスク】
+1. まず「${companyName}」がどの業界の企業かを特定してください
+2. DOOMの公式サイトやプレスリリースで公開されている実際の導入事例から、「${companyName}」と同じ業界または類似業界の企業を2〜3社探してください
+3. 各企業について以下を調べてください：
+   - 企業名
+   - 業界
+   - DOMO導入前の課題
+   - DOMO導入後の成果・効果
 
-注意:
-- 実際の公開事例のみ使用
-- 架空の事例は禁止
-- 日本企業を優先
+【重要なルール】
+- DOOMの実際に公開されている導入事例のみを使用してください
+- 架空の企業や事例を作らないでください
+- 日本企業の事例を優先してください
+- 「${companyName}」自身は除外してください
+- 情報源（DOMO公式サイト、プレスリリース等）を明記してください
 
-JSON形式のみで回答（説明文不要）:
-{"cases":[{"companyName":"企業名","industry":"業界","challenge":"課題","result":"成果","source":"情報源"}]}`;
+【出力形式】
+以下のJSON形式のみで回答してください。説明文は不要です。
+
+{
+  "searchedCompanyIndustry": "${companyName}の業界",
+  "cases": [
+    {
+      "companyName": "導入企業名",
+      "industry": "業界",
+      "challenge": "DOMO導入前の課題（50-100文字）",
+      "result": "DOMO導入後の成果（50-100文字）",
+      "source": "情報源"
+    }
+  ]
+}`;
 
   try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const content = response.text();
+
+    console.log('Gemini response:', content);
 
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -73,18 +95,23 @@ JSON形式のみで回答（説明文不要）:
     }
 
     const parsed = JSON.parse(jsonMatch[0]);
-    return (parsed.cases || [])
-      .filter((c: any) =>
-        !c.companyName.toLowerCase().includes(companyName.toLowerCase()) &&
-        !companyName.toLowerCase().includes(c.companyName.toLowerCase())
-      )
+
+    // 検索対象企業自身を除外
+    const filteredCases = (parsed.cases || [])
+      .filter((c: any) => {
+        const caseName = (c.companyName || '').toLowerCase();
+        const searchName = companyName.toLowerCase();
+        return !caseName.includes(searchName) && !searchName.includes(caseName);
+      })
       .map((c: any) => ({
         companyName: c.companyName || '',
         industry: c.industry || '',
         challenge: c.challenge || '',
         result: c.result || '',
-        source: c.source || 'Gemini調査',
+        source: c.source || 'DOMO導入事例',
       }));
+
+    return filteredCases.slice(0, 3);
   } catch (error) {
     console.error('Gemini API error:', error);
     throw error;
