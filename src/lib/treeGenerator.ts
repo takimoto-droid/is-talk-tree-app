@@ -248,19 +248,26 @@ function getDefaultCase(productName: string): CaseStudy {
 function estimateIndustryFromName(companyName: string, targetIndustries: string[]): string {
   const name = companyName.toLowerCase();
 
+  // 業界キーワードマッピング（より詳細に）
   const industryKeywords: Record<string, string[]> = {
+    '通信・テクノロジー': ['通信', 'テレコム', 'ソフトバンク', 'kddi', 'ntt', 'ドコモ', 'docomo', '楽天モバイル', 'au', 'モバイル', 'テクノロジー', 'テック'],
     '通信': ['通信', 'テレコム', 'ソフトバンク', 'kddi', 'ntt', 'ドコモ', 'docomo', '楽天モバイル', 'au', 'モバイル'],
-    'IT': ['it', 'システム', 'ソフトウェア', 'テクノロジー', 'データ', 'ai', 'クラウド', 'デジタル', 'web', 'インターネット', 'サイバー', 'テック'],
-    '製造': ['製造', 'メーカー', '自動車', '電機', '機械', 'トヨタ', 'toyota', 'ホンダ', 'honda', 'パナソニック', 'panasonic', 'ソニー', 'sony', '日立', 'hitachi', '工業', '重工', '電子', '部品'],
-    '金融': ['銀行', '証券', '保険', '金融', 'ファイナンス', 'ufj', 'みずほ', '三井住友', 'smbc', '信託', 'リース', 'カード', '投資', 'キャピタル'],
-    '小売': ['小売', '流通', '百貨店', 'コンビニ', 'スーパー', 'イオン', 'セブン', 'ユニクロ', 'アマゾン', 'amazon', '楽天', 'ec', '通販', 'ストア', 'マート'],
-    'コンサル': ['コンサル', 'コンサルティング', '総研', '研究所', 'シンクタンク', 'アクセンチュア', 'デロイト', 'pwc', 'マッキンゼー'],
-    'メディア': ['メディア', '広告', '放送', '出版', 'テレビ', 'tv', '新聞', 'ニュース', 'エンターテイメント', 'エンタメ', '電通', '博報堂'],
-    '不動産': ['不動産', '建設', '住宅', 'ディベロッパー', '建築', 'ハウス', 'ホーム', '地所', '信託'],
-    '医療': ['医療', '製薬', 'ヘルスケア', '病院', '薬', 'ファーマ', 'バイオ', 'メディカル'],
-    'サービス': ['サービス', '人材', '旅行', 'ホテル', '飲食', 'フード', 'レストラン', 'jtb', 'リクルート'],
+    'IT・ソフトウェア': ['it', 'システム', 'ソフトウェア', 'データ', 'ai', 'クラウド', 'デジタル', 'web', 'インターネット', 'サイバー'],
+    'ITサービス': ['itサービス', 'システム', 'ソフトウェア', 'ソリューション', 'インテグレーター', 'si'],
+    '製造・家電': ['パナソニック', 'panasonic', 'ソニー', 'sony', 'シャープ', 'sharp', '日立', 'hitachi', '東芝', 'toshiba', '家電', '電機', '電気'],
+    '製造': ['製造', 'メーカー', '自動車', '機械', 'トヨタ', 'toyota', 'ホンダ', 'honda', '工業', '重工', '電子', '部品', 'オムロン'],
+    '金融': ['銀行', '証券', '保険', '金融', 'ファイナンス', 'ufj', 'みずほ', '三井住友', 'smbc', '信託', 'リース', 'カード', '投資', 'キャピタル', '野村', 'nomura'],
+    '小売・流通': ['小売', '流通', '百貨店', 'コンビニ', 'スーパー', 'イオン', 'セブン', 'ユニクロ', 'アマゾン', 'amazon', '楽天', 'ec', '通販', 'ストア', 'マート'],
+    'コンサルティング': ['コンサル', 'コンサルティング', '総研', '研究所', 'シンクタンク', 'アクセンチュア', 'デロイト', 'pwc', 'マッキンゼー', 'nri', '野村総研', '野村総合研究所'],
+    'メディア・広告': ['メディア', '広告', '放送', '出版', 'テレビ', 'tv', '新聞', 'ニュース', 'エンターテイメント', 'エンタメ', '電通', '博報堂'],
+    '不動産・建設': ['不動産', '建設', '住宅', 'ディベロッパー', '建築', 'ハウス', 'ホーム', '地所'],
+    '物流': ['物流', 'ロジスティクス', '運送', '運輸', '倉庫', '配送', 'ヤマト', '佐川', '日通'],
+    '旅行・観光': ['旅行', '観光', 'トラベル', 'ツーリズム', 'jtb', 'his', 'ホテル', '航空', 'ana', 'jal'],
+    '医療・ヘルスケア': ['医療', '製薬', 'ヘルスケア', '病院', '薬', 'ファーマ', 'バイオ', 'メディカル'],
+    'サービス': ['サービス', '人材', '飲食', 'フード', 'レストラン', 'リクルート'],
   };
 
+  // 最初にマッチした業界を返す
   for (const [industry, keywords] of Object.entries(industryKeywords)) {
     for (const keyword of keywords) {
       if (name.includes(keyword.toLowerCase())) {
@@ -286,7 +293,7 @@ function getNewsFeature(title: string): string {
   return '業務効率化やデータ活用に力を入れていらっしゃる';
 }
 
-// 業界マッチングの類似度を計算
+// 業界マッチングの類似度を計算（改善版）
 function calculateIndustrySimilarity(caseIndustry: string, targetIndustry: string): number {
   if (!caseIndustry || !targetIndustry) return 0;
 
@@ -296,20 +303,45 @@ function calculateIndustrySimilarity(caseIndustry: string, targetIndustry: strin
   // 完全一致
   if (caseInd === targetInd) return 100;
 
-  // 部分一致
+  // 業界の正規化マッピング（Excel の業界名と推定業界の対応表）
+  const industryNormalization: Record<string, string[]> = {
+    '通信・テクノロジー': ['通信', 'テクノロジー', 'it', 'テック', 'デジタル'],
+    'itサービス': ['it', 'システム', 'ソフトウェア', 'ソリューション'],
+    '製造・家電': ['製造', '家電', '電機', 'エレクトロニクス'],
+    '小売・流通': ['小売', '流通', 'リテール'],
+    'メディア・広告': ['メディア', '広告', 'マーケティング'],
+    '不動産・建設': ['不動産', '建設', '住宅'],
+    '旅行・観光': ['旅行', '観光', 'ホテル', 'トラベル'],
+    '医療・ヘルスケア': ['医療', 'ヘルスケア', '製薬', 'バイオ'],
+    'コンサルティング': ['コンサル', 'コンサルティング', '総研'],
+  };
+
+  // 正規化によるマッチング
+  for (const [normalizedIndustry, aliases] of Object.entries(industryNormalization)) {
+    const caseMatch = caseInd.includes(normalizedIndustry) || aliases.some(a => caseInd.includes(a));
+    const targetMatch = targetInd.includes(normalizedIndustry) || aliases.some(a => targetInd.includes(a));
+
+    if (caseMatch && targetMatch) {
+      return 90;
+    }
+  }
+
+  // 部分一致（どちらかが他方を含む）
   if (caseInd.includes(targetInd) || targetInd.includes(caseInd)) return 80;
 
-  // 業界グループによるマッチング
+  // 業界グループによるマッチング（類似業界同士）
   const industryGroups: Record<string, string[]> = {
-    '通信・IT': ['通信', 'it', 'テクノロジー', 'ソフトウェア', 'システム', 'デジタル', 'インターネット', 'web', 'クラウド'],
-    '製造': ['製造', 'メーカー', '電機', '機械', '自動車', '工業', 'エレクトロニクス', '電子', '部品'],
-    '金融': ['金融', '銀行', '証券', '保険', 'ファイナンス', '投資', 'リース', 'カード'],
-    '小売・流通': ['小売', '流通', '百貨店', 'スーパー', 'コンビニ', 'ec', 'eコマース', '通販'],
-    'コンサル': ['コンサル', 'コンサルティング', '総研', '研究所', 'シンクタンク'],
-    'メディア': ['メディア', '広告', '放送', '出版', 'エンターテイメント', '映像', 'マーケティング'],
-    '不動産': ['不動産', '建設', '住宅', 'ディベロッパー', '建築'],
-    '医療・ヘルスケア': ['医療', '製薬', 'ヘルスケア', '病院', '薬', 'バイオ'],
-    'サービス': ['サービス', '人材', '旅行', 'ホテル', '飲食', 'フード'],
+    '通信・IT系': ['通信', 'it', 'テクノロジー', 'ソフトウェア', 'システム', 'デジタル', 'インターネット', 'web', 'クラウド', 'itサービス', 'テック'],
+    '製造系': ['製造', 'メーカー', '電機', '機械', '自動車', '工業', 'エレクトロニクス', '電子', '部品', '家電'],
+    '金融系': ['金融', '銀行', '証券', '保険', 'ファイナンス', '投資', 'リース', 'カード'],
+    '小売・流通系': ['小売', '流通', '百貨店', 'スーパー', 'コンビニ', 'ec', 'eコマース', '通販', 'リテール'],
+    'コンサル系': ['コンサル', 'コンサルティング', '総研', '研究所', 'シンクタンク'],
+    'メディア系': ['メディア', '広告', '放送', '出版', 'エンターテイメント', '映像', 'マーケティング'],
+    '不動産系': ['不動産', '建設', '住宅', 'ディベロッパー', '建築'],
+    '物流系': ['物流', 'ロジスティクス', '運送', '運輸', '配送'],
+    '旅行系': ['旅行', '観光', 'ホテル', 'トラベル', 'ツーリズム'],
+    '医療系': ['医療', '製薬', 'ヘルスケア', '病院', '薬', 'バイオ'],
+    'サービス系': ['サービス', '人材', '飲食', 'フード'],
   };
 
   // 両方の業界が同じグループに属しているかチェック
@@ -318,18 +350,18 @@ function calculateIndustrySimilarity(caseIndustry: string, targetIndustry: strin
     const targetInGroup = keywords.some(kw => targetInd.includes(kw));
 
     if (caseInGroup && targetInGroup) {
-      return 60;
+      return 70;
     }
   }
 
   // キーワード部分一致
-  const caseWords = caseInd.split(/[・\s\/]/);
-  const targetWords = targetInd.split(/[・\s\/]/);
+  const caseWords = caseInd.split(/[・\s\/\-]/);
+  const targetWords = targetInd.split(/[・\s\/\-]/);
 
   for (const cw of caseWords) {
     for (const tw of targetWords) {
       if (cw.length > 1 && tw.length > 1 && (cw.includes(tw) || tw.includes(cw))) {
-        return 40;
+        return 50;
       }
     }
   }
@@ -403,14 +435,27 @@ function getMatchedCasesByIndustry(
   // スコアでソート（高い順）、同スコアの場合は元の順序を維持
   scoredCases.sort((a, b) => b.score - a.score);
 
-  // デバッグログ（開発時のみ）
-  console.log('Industry matching results:', scoredCases.map(s => ({
+  // デバッグログ
+  console.log('=== Industry Matching Debug ===');
+  console.log('Search company:', companyName);
+  console.log('Estimated industry:', estimatedIndustry);
+  console.log('Total case studies:', caseStudies.length);
+  console.log('Top matches:', scoredCases.slice(0, 5).map(s => ({
     company: s.caseStudy.companyName,
-    industry: s.caseStudy.industry,
-    score: s.score,
+    caseIndustry: s.caseStudy.industry,
+    industryScore: s.industryScore,
+    companyScore: s.companyScore,
+    totalScore: s.score,
   })));
 
-  // スコアが0以上の事例を返す（最大5件）
+  // スコアが0より大きい事例を優先、なければスコア0も含める（最大5件）
+  const highScoreCases = scoredCases.filter(s => s.score > 0);
+
+  if (highScoreCases.length >= 2) {
+    return highScoreCases.slice(0, 5).map(s => s.caseStudy);
+  }
+
+  // スコアが高いものが2件未満の場合、同じ業界グループから補完
   return scoredCases
     .filter(s => s.score >= 0)
     .slice(0, 5)
