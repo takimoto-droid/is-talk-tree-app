@@ -6,7 +6,15 @@ interface SimilarCase {
   challenge: string;
   result: string;
   source: string;
-  keywords: string[];
+  keywords?: string[];
+}
+
+interface SimilarCaseResponse {
+  companyName: string;
+  industry: string;
+  challenge: string;
+  result: string;
+  source: string;
 }
 
 // DOMO公式サイトの導入事例データベース
@@ -308,7 +316,7 @@ export async function GET(request: Request) {
   }
 }
 
-function findSimilarCases(companyName: string, targetIndustry: string): SimilarCase[] {
+function findSimilarCases(companyName: string, targetIndustry: string): SimilarCaseResponse[] {
   const companyLower = companyName.toLowerCase();
   const industryLower = targetIndustry.toLowerCase();
 
