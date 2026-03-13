@@ -337,7 +337,8 @@ function findSimilarCases(companyName: string, targetIndustry: string): SimilarC
     }
 
     // 2. キーワードマッチ
-    for (const keyword of caseStudy.keywords) {
+    const keywords = caseStudy.keywords || [];
+    for (const keyword of keywords) {
       if (industryLower.includes(keyword.toLowerCase())) {
         score += 20;
       }
@@ -350,7 +351,7 @@ function findSimilarCases(companyName: string, targetIndustry: string): SimilarC
     for (const [group, keywords] of Object.entries(industryKeywords)) {
       const caseInGroup = keywords.some(kw =>
         caseStudy.industry.toLowerCase().includes(kw.toLowerCase()) ||
-        caseStudy.keywords.some(ck => ck.toLowerCase().includes(kw.toLowerCase()))
+        (caseStudy.keywords || []).some(ck => ck.toLowerCase().includes(kw.toLowerCase()))
       );
       const targetInGroup = keywords.some(kw =>
         industryLower.includes(kw.toLowerCase()) ||
