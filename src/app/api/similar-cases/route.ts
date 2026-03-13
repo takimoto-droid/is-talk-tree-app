@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 interface SimilarCase {
   companyName: string;
@@ -19,15 +19,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: '会社名が必要です' }, { status: 400 });
   }
 
-  // OpenAI API キーの確認
-  const apiKey = process.env.OPENAI_API_KEY;
+  // Gemini API キーの確認
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error('OPENAI_API_KEY is not set');
+    console.error('GEMINI_API_KEY is not set');
     return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
   }
 
   try {
-    const cases = await searchCasesWithOpenAI(companyName, industry, productName, apiKey);
+    const cases = await searchCasesWithGemini(companyName, industry, productName, apiKey);
     return NextResponse.json({ cases });
   } catch (error) {
     console.error('Similar cases fetch error:', error);
@@ -35,13 +35,14 @@ export async function GET(request: Request) {
   }
 }
 
-async function searchCasesWithOpenAI(
+async function searchCasesWithGemini(
   companyName: string,
   industry: string,
   productName: string,
   apiKey: string
 ): Promise<SimilarCase[]> {
-  const openai = new OpenAI({ apiKey });
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const prompt = `あなたはBIツール「${productName}（DOMO/ドーモ）」の導入事例に詳しいエキスパートです。
 
@@ -60,7 +61,7 @@ async function searchCasesWithOpenAI(
 - 日本企業の事例を優先してください
 - 情報が不確実な場合は、その旨を記載してください
 
-以下のJSON形式のみで回答してください（説明文は不要）：
+以下のJSON形式のみで回答してください（説明文は不要、JSONのみ）：
 {
   "cases": [
     {
@@ -74,23 +75,9 @@ async function searchCasesWithOpenAI(
 }`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: 'あなたはDOMO（ビジネスインテリジェンスプラットフォーム）の導入事例に詳しいエキスパートです。実際の公開情報に基づいて回答してください。',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.3,
-      max_tokens: 1024,
-    });
-
-    const content = response.choices[0]?.message?.content || '';
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const content = response.text();
 
     // JSONを抽出
     const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -105,7 +92,7 @@ async function searchCasesWithOpenAI(
       industry: c.industry || '',
       challenge: c.challenge || '',
       result: c.result || '',
-      source: c.source || 'OpenAI調査',
+      source: c.source || 'Gemini調査',
     }));
 
     // 検索対象企業自身は除外
@@ -114,7 +101,7 @@ async function searchCasesWithOpenAI(
       !companyName.toLowerCase().includes(c.companyName.toLowerCase())
     );
   } catch (error) {
-    console.error('OpenAI API error:', error);
+    console.error('Gemini API error:', error);
     throw error;
   }
 }
