@@ -120,17 +120,24 @@ function fallbackStaticMatching(
   // スコア順にソート
   scoredCases.sort((a, b) => b.score - a.score);
 
-  // 上位3件を返す
-  return scoredCases
-    .filter(s => s.score > 0)
-    .slice(0, 3)
-    .map(s => ({
-      companyName: s.case.companyName,
-      industry: s.case.industry,
-      challenge: s.case.challenge || '',
-      result: s.case.result || '',
-      source: 'Excel導入事例',
-    }));
+  // スコアが高い順に並べ替え済み
+  const filteredCases = scoredCases.filter(s => s.score > -1000);
+
+  // マッチがある場合は上位3件、ない場合でも上位3件を返す
+  const topCases = filteredCases.slice(0, 3);
+
+  // 結果がない場合のメッセージ
+  if (topCases.length === 0) {
+    return [];
+  }
+
+  return topCases.map(s => ({
+    companyName: s.case.companyName,
+    industry: s.case.industry,
+    challenge: s.case.challenge || '',
+    result: s.case.result || '',
+    source: 'Excel導入事例',
+  }));
 }
 
 // GETもサポート（後方互換性）
