@@ -36,12 +36,19 @@ export default function Home() {
     }
   };
 
-  const fetchSimilarCases = async (companyName: string, industry: string, productName: string): Promise<void> => {
+  const fetchSimilarCases = async (companyName: string, industry: string, productName: string, caseStudies: CaseStudy[]): Promise<void> => {
     setAiCasesLoading(true);
     try {
-      const response = await fetch(
-        `/api/similar-cases?company=${encodeURIComponent(companyName)}&industry=${encodeURIComponent(industry)}&product=${encodeURIComponent(productName)}`
-      );
+      const response = await fetch('/api/similar-cases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company: companyName,
+          industry: industry,
+          product: productName,
+          caseStudies: caseStudies,
+        }),
+      });
       if (!response.ok) throw new Error('Similar cases fetch failed');
       const data = await response.json();
 
@@ -103,7 +110,7 @@ export default function Home() {
 
       // AIで類似企業の導入事例を検索
       const estimatedIndustry = result.companyInfo.estimatedIndustry || '';
-      fetchSimilarCases(companyName, estimatedIndustry, config.productName);
+      fetchSimilarCases(companyName, estimatedIndustry, config.productName, config.caseStudies);
 
       // ドメインが指定されていれば技術スタックを取得
       if (domain) {
