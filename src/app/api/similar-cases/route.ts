@@ -43,40 +43,44 @@ async function searchCasesWithGemini(
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-  const prompt = `あなたはBIツール「DOMO（ドーモ）」の導入事例データベースです。
+  const prompt = `あなたはDOMO（ビジネスインテリジェンスツール）の導入事例を調査するエキスパートです。
 
-【検索対象】
-企業名: ${companyName}
-業界: ${industry || '不明'}
+【調査依頼】
+検索企業: ${companyName}
+推定業界: ${industry || '（不明）'}
 
-【あなたのタスク】
-1. まず「${companyName}」がどの業界の企業かを特定してください
-2. DOOMの公式サイトやプレスリリースで公開されている実際の導入事例から、「${companyName}」と同じ業界または類似業界の企業を2〜3社探してください
-3. 各企業について以下を調べてください：
-   - 企業名
-   - 業界
-   - DOMO導入前の課題
-   - DOMO導入後の成果・効果
+【タスク】
+DOOMを実際に導入している日本企業の中から、「${companyName}」と業界や事業内容が近い企業を探してください。
 
-【重要なルール】
-- DOOMの実際に公開されている導入事例のみを使用してください
-- 架空の企業や事例を作らないでください
-- 日本企業の事例を優先してください
-- 「${companyName}」自身は除外してください
-- 情報源（DOMO公式サイト、プレスリリース等）を明記してください
+【DOOMの主な日本導入企業（参考）】
+- 通信: ソフトバンク、KDDI、NTTコミュニケーションズ
+- 製造: パナソニック、オムロン、コニカミノルタ、デンソー
+- 金融: 三井住友銀行、野村総合研究所、SBI証券
+- 小売: イオン、ローソン、ニトリ
+- IT: サイバーエージェント、楽天、LINE
+- 広告: 電通、博報堂
+- 物流: 日本通運、ヤマト運輸
+- 不動産: 三井不動産、大和ハウス
+- 旅行: JTB、ANA
+- 製薬: アステラス製薬、第一三共
+- 食品: サントリー、味の素
+- エネルギー: 東京ガス、関西電力
 
-【出力形式】
-以下のJSON形式のみで回答してください。説明文は不要です。
+【回答ルール】
+1. 「${companyName}」と同じ業界、または類似業界のDOMO導入企業を2〜3社選んでください
+2. 各企業のDOMO導入における課題と成果を記載してください
+3. 「${companyName}」自体は含めないでください
+4. 実在する企業のみ記載してください
 
+【出力形式】JSONのみ（説明文不要）
 {
-  "searchedCompanyIndustry": "${companyName}の業界",
   "cases": [
     {
-      "companyName": "導入企業名",
+      "companyName": "企業名",
       "industry": "業界",
-      "challenge": "DOMO導入前の課題（50-100文字）",
-      "result": "DOMO導入後の成果（50-100文字）",
-      "source": "情報源"
+      "challenge": "DOMO導入前の課題",
+      "result": "DOMO導入による成果・効果",
+      "source": "DOMO公式導入事例"
     }
   ]
 }`;
@@ -96,7 +100,6 @@ async function searchCasesWithGemini(
 
     const parsed = JSON.parse(jsonMatch[0]);
 
-    // 検索対象企業自身を除外
     const filteredCases = (parsed.cases || [])
       .filter((c: any) => {
         const caseName = (c.companyName || '').toLowerCase();
@@ -108,7 +111,7 @@ async function searchCasesWithGemini(
         industry: c.industry || '',
         challenge: c.challenge || '',
         result: c.result || '',
-        source: c.source || 'DOMO導入事例',
+        source: c.source || 'DOMO公式導入事例',
       }));
 
     return filteredCases.slice(0, 3);
