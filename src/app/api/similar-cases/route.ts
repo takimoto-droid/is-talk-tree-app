@@ -79,7 +79,7 @@ async function searchCasesWithGemini(
   apiKey: string
 ): Promise<SimilarCaseResponse[]> {
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
   // Excelから読み込んだ導入事例をリスト化
   const caseList = caseStudies.length > 0
