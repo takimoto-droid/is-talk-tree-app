@@ -117,3 +117,117 @@ export interface ProjectConfig {
   // 競合との差別化ポイント（Excelから読み込む）
   competitiveDiff?: string;
 }
+
+// ========== メール生成 ==========
+
+export type EmailUseCase =
+  | 'direct-appointment'      // アポイント依頼（本人直送）
+  | 'secretary-appointment'   // アポイント依頼（秘書あて）
+  | 'business-card-followup'  // 名刺交換後の初回アプローチ
+  | 'other-dept-expansion';   // 別部署導入済み展開
+
+export interface EmailBaseInput {
+  companyName: string;
+  department?: string;        // 任意（役員等部署なしのケースに対応）
+  contactName?: string;
+  contactRole?: string;       // 役職名
+  industry?: string;
+  // 差出人情報（任意・未入力時はデフォルト値を使用）
+  senderName?: string;        // 例: Hikari Michimoto / 道本 光
+  senderCompany?: string;     // 例: ドーモ株式会社
+  senderEmail?: string;       // 例: hikari.domoto@domo.com
+  senderPhone?: string;       // 例: 050-1782-7024
+}
+
+// カスタムユースケース
+export interface CustomUseCaseField {
+  id: string;
+  label: string;
+  type: 'text' | 'textarea';
+  required: boolean;
+  isBuiltin: boolean;
+}
+
+export interface CustomUseCase {
+  id: string;
+  title: string;
+  prompt: string;
+  fields: CustomUseCaseField[];
+  createdAt: string;
+}
+
+// カスタムUCのメール生成入力
+export interface CustomEmailInput {
+  useCase: 'custom';
+  useCaseId: string;
+  customPrompt: string;
+  companyName: string;
+  department?: string;
+  contactName?: string;
+  contactRole?: string;
+  senderName?: string;
+  senderCompany?: string;
+  senderEmail?: string;
+  senderPhone?: string;
+  customFields?: Record<string, string>;
+}
+
+export type AnyEmailGenerateInput = EmailGenerateInput | CustomEmailInput;
+
+// アポイント依頼（本人直送）
+export interface DirectAppointmentInput extends EmailBaseInput {
+  useCase: 'direct-appointment';
+  contactRole: string;           // 宛先の役職（必須）
+  whyYouReason: string;          // 何を見たか（必須）
+  currentInitiative: string;     // 取り組み・目指していること（必須）
+  dataChallenge: string;         // データ活用基盤の課題（必須）
+  domoSolution: string;          // DOMOで解決できること（必須）
+  candidateDates?: string[];     // 候補日（カレンダーで複数選択）
+}
+
+// アポイント依頼（秘書あて）
+export interface SecretaryAppointmentInput extends EmailBaseInput {
+  useCase: 'secretary-appointment';
+  secretaryName?: string;        // 秘書の名前（任意）
+  targetRole: string;            // アポが欲しい人の役職（必須）
+  targetName: string;            // アポが欲しい人の名前（必須）
+  whyYouReason: string;          // 何を見たか（必須）
+  currentInitiative: string;     // 取り組み・目指していること（必須）
+  dataChallenge: string;         // データ活用基盤の課題（必須）
+  domoSolution: string;          // DOMOで解決できること（必須）
+  candidateDates?: string[];
+}
+
+// 名刺交換後の初回アプローチ
+export interface BusinessCardFollowupInput extends EmailBaseInput {
+  useCase: 'business-card-followup';
+  // contactName は EmailBaseInput の任意項目を使用
+}
+
+// 別部署導入済み展開（プレースホルダー）
+export interface OtherDeptExpansionInput extends EmailBaseInput {
+  useCase: 'other-dept-expansion';
+  existingDept?: string;
+}
+
+export type EmailGenerateInput =
+  | DirectAppointmentInput
+  | SecretaryAppointmentInput
+  | BusinessCardFollowupInput
+  | OtherDeptExpansionInput;
+
+export interface EmailGenerateOutput {
+  subject: string;
+  body: string;
+  useCase: EmailUseCase;
+  generatedAt: string;
+}
+
+export interface EmailHistoryItem {
+  id: string;
+  companyName: string;
+  useCase: EmailUseCase;
+  subject: string;
+  body: string;
+  generatedAt: string;
+}
