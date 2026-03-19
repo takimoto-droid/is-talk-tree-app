@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { TalkNode, CaseStudy, GenerateTreeResponse, NewsItem, TechItem, GeneratedScript, GeneratedRedirect, RecommendedCompany } from '@/types';
+import AppNavDropdown from '@/components/AppNavDropdown';
 import { generateTalkTree } from '@/lib/treeGenerator';
 import { useProject } from '@/context/ProjectContext';
 import ProjectSetup from '@/components/ProjectSetup';
@@ -381,9 +382,7 @@ export default function Home() {
       {/* ヘッダー */}
       <header className="app-header">
         <div className="app-header-left">
-          <h1 className="app-logo">
-            <span>IS</span> Talk Tree
-          </h1>
+          <AppNavDropdown />
           <span className="app-project-name">{config.productName}</span>
         </div>
         <div className="app-header-right">

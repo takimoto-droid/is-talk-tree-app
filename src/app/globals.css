@@ -31,7 +31,6 @@ body {
 }
 
 .app-header {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -83,127 +82,6 @@ body {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
   color: #f1f5f9;
-}
-
-.slack-settings-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: rgba(74, 21, 75, 0.2);
-  border: 1px solid rgba(74, 21, 75, 0.4);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #E01E5A;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.slack-settings-button:hover {
-  background: rgba(74, 21, 75, 0.3);
-  border-color: rgba(74, 21, 75, 0.6);
-}
-
-.slack-settings-button.configured {
-  background: rgba(74, 21, 75, 0.4);
-  border-color: #E01E5A;
-}
-
-.slack-input-panel {
-  position: absolute;
-  top: 100%;
-  right: 20px;
-  margin-top: 8px;
-  width: 400px;
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  z-index: 100;
-  animation: slideDown 0.2s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.slack-input-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-weight: 600;
-  color: white;
-}
-
-.slack-input-body {
-  padding: 20px;
-}
-
-.slack-input-body label {
-  display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: #94a3b8;
-  margin-bottom: 8px;
-}
-
-.slack-url-input {
-  width: 100%;
-  padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  font-size: 14px;
-  color: white;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.slack-url-input:focus {
-  border-color: #E01E5A;
-}
-
-.slack-url-input::placeholder {
-  color: #64748b;
-}
-
-.slack-input-help {
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 8px;
-}
-
-.slack-input-footer {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: flex-end;
-}
-
-.slack-save-button {
-  padding: 10px 24px;
-  background: linear-gradient(135deg, #4A154B, #611f69);
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.slack-save-button:hover {
-  background: linear-gradient(135deg, #611f69, #7c2d7c);
 }
 
 .app-logo {
@@ -467,76 +345,6 @@ body {
   font-weight: 600;
   color: white;
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.script-ai-badge {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
-}
-
-.script-ai-loading {
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.script-insights-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #60a5fa;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.script-insights-btn:hover {
-  background: rgba(59, 130, 246, 0.25);
-  border-color: rgba(59, 130, 246, 0.5);
-}
-
-.script-insights {
-  margin: 0 20px 20px 20px;
-  padding: 16px;
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 8px;
-}
-
-.script-insights-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #60a5fa;
-  margin-bottom: 12px;
-}
-
-.script-insights-content {
-  font-size: 13px;
-  color: #94a3b8;
-  line-height: 1.6;
-}
-
-.script-insights-content p {
-  margin: 4px 0;
 }
 
 .script-subtitle {
@@ -705,23 +513,6 @@ body {
   font-weight: 600;
   color: white;
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tree-ai-badge {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: linear-gradient(135deg, #22c55e, #10b981);
-  color: white;
-}
-
-.tree-ai-loading {
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-  animation: pulse 1.5s infinite;
 }
 
 .tree-subtitle {
@@ -1331,39 +1122,6 @@ body {
   flex-shrink: 0;
 }
 
-.tree-script-action {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.tree-slack-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #4A154B, #611f69);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(74, 21, 75, 0.4);
-}
-
-.tree-slack-button:hover {
-  background: linear-gradient(135deg, #611f69, #7c2d7c);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(74, 21, 75, 0.5);
-}
-
-.tree-slack-button svg {
-  flex-shrink: 0;
-}
-
 /* スクロールバー */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #f0f0f0; }
@@ -1779,20 +1537,9 @@ body {
 }
 
 .case-source {
-  display: flex;
-  align-items: center;
   font-size: 11px;
   color: #64748b;
   font-style: italic;
-}
-
-.case-source-web {
-  color: #3b82f6;
-  font-style: normal;
-  font-weight: 500;
-  background: rgba(59, 130, 246, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
 }
 
 .case-loading {
@@ -2455,6 +2202,1285 @@ body {
   flex-shrink: 0;
 }
 
+/* ========== メール生成 ========== */
+
+.email-generator {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.email-generator-header {
+  margin-bottom: 24px;
+}
+
+.email-generator-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 6px;
+}
+
+.email-generator-desc {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* フォーム */
+.email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.email-usecase-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.email-usecase-tab {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.email-usecase-tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.email-usecase-tab.active {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.email-usecase-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.email-usecase-tab.active .email-usecase-label {
+  color: #93c5fd;
+}
+
+.email-usecase-tone {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.email-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.email-form-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.email-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .email-form-row { grid-template-columns: 1fr; }
+  .email-usecase-tab { min-width: 100%; }
+}
+
+.email-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.email-form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.email-required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.email-optional {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.email-form-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #f1f5f9;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.email-form-input::placeholder { color: #64748b; }
+.email-form-input:focus { border-color: rgba(59, 130, 246, 0.5); }
+
+.email-form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #f1f5f9;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.email-form-textarea::placeholder { color: #64748b; }
+.email-form-textarea:focus { border-color: rgba(59, 130, 246, 0.5); }
+
+.email-form-optional {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-optional-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+
+.email-optional-toggle:hover { color: #94a3b8; }
+
+.email-generate-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.email-generate-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+}
+
+.email-generate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 結果表示 */
+.email-output-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.email-output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.email-output-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.email-output-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.email-copy-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2));
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a5b4fc;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.email-copy-all-btn:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(99, 102, 241, 0.3));
+}
+
+.email-regenerate-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.email-regenerate-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+}
+
+.email-regenerate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.email-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.email-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.email-copy-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: #3b82f6;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.email-copy-btn:hover { background: rgba(59, 130, 246, 0.1); }
+
+.email-subject-content {
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+  line-height: 1.5;
+}
+
+.email-body-content {
+  padding: 16px;
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+.email-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+
+.email-back-btn:hover { color: #94a3b8; }
+
+.email-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #fca5a5;
+}
+
+/* ========== ナビゲーションドロップダウン ========== */
+
+.app-nav-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.app-nav-trigger:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.app-nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 180px;
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 6px;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.app-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.app-nav-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: #f1f5f9;
+}
+
+.app-nav-item.active {
+  background: rgba(59,130,246,0.15);
+  color: #93c5fd;
+}
+
+/* ========== メール生成 左右分割レイアウト ========== */
+
+.email-split-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .email-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.email-left-panel {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.email-left-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 20px;
+}
+
+.email-right-panel {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 24px;
+  min-height: 400px;
+}
+
+.email-right-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.email-result-badge {
+  padding: 4px 10px;
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #93c5fd;
+}
+
+/* ========== フォーム select ========== */
+
+.email-form-select {
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #f1f5f9;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.email-form-select:focus {
+  border-color: rgba(59,130,246,0.5);
+}
+
+.email-form-select option {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+/* ========== ヒントテキスト ========== */
+
+.email-form-hint {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* ========== 準備中メッセージ ========== */
+
+.email-placeholder-msg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #a5b4fc;
+}
+
+/* ========== カレンダー ========== */
+
+.email-date-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.email-date-trigger:hover {
+  border-color: rgba(59,130,246,0.4);
+}
+
+.email-date-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.email-date-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  color: #93c5fd;
+}
+
+.email-date-time-input {
+  padding: 2px 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(59,130,246,0.25);
+  border-radius: 6px;
+  font-size: 11px;
+  color: #bfdbfe;
+  outline: none;
+  width: 110px;
+}
+
+.email-date-time-input::placeholder { color: #475569; }
+.email-date-time-input:focus { border-color: rgba(59,130,246,0.5); }
+
+.email-date-tag-remove {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+
+.email-date-tag-remove:hover { color: #ef4444; }
+
+.email-calendar-popup {
+  margin-top: 8px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* react-day-picker ダークテーマ（旧ブロック削除済み・下の .email-calendar-popup で上書き） */
+
+/* ========== 履歴 ========== */
+
+.email-history {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.email-history-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.email-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.email-history-item {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.email-history-item:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(59,130,246,0.3);
+}
+
+.email-history-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.email-history-usecase {
+  font-size: 11px;
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.email-history-date {
+  font-size: 11px;
+  color: #475569;
+}
+
+.email-history-company {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.email-history-subject {
+  font-size: 12px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email-history-copy {
+  margin-top: 6px;
+  align-self: flex-start;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.email-history-copy:hover {
+  background: rgba(59,130,246,0.1);
+  color: #3b82f6;
+  border-color: rgba(59,130,246,0.3);
+}
+
+.email-history-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  color: #334155;
+  text-align: center;
+}
+
+.email-history-empty p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0;
+}
+
+.email-history-empty span {
+  font-size: 12px;
+  color: #334155;
+}
+
+/* ========== ユースケース カスタムドロップダウン ========== */
+
+.email-uc-select-wrap {
+  position: relative;
+}
+
+.email-uc-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: left;
+  letter-spacing: 0.01em;
+}
+
+.email-uc-trigger:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.22);
+}
+
+.email-uc-trigger-open {
+  border-color: rgba(59,130,246,0.5);
+  background: rgba(255,255,255,0.09);
+}
+
+.email-uc-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #0d1b2e;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 200;
+  overflow: hidden;
+  padding: 6px 0;
+}
+
+.email-uc-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 14px 4px;
+}
+
+.email-uc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: background 0.12s;
+  gap: 8px;
+}
+
+.email-uc-item:hover { background: rgba(255,255,255,0.05); }
+.email-uc-item.active { color: #93c5fd; background: rgba(59,130,246,0.1); }
+
+.email-uc-item-label { flex: 1; }
+
+.email-uc-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.email-uc-item-edit-btn,
+.email-uc-item-delete-btn {
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.12s;
+  line-height: 1.6;
+}
+
+.email-uc-item-edit-btn {
+  background: rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.3);
+  color: #93c5fd;
+}
+
+.email-uc-item-edit-btn:hover {
+  background: rgba(59,130,246,0.28);
+}
+
+.email-uc-item-delete-btn {
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.28);
+  color: #fca5a5;
+}
+
+.email-uc-item-delete-btn:hover {
+  background: rgba(239,68,68,0.22);
+}
+
+.email-uc-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 6px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 4px;
+  font-size: 12px;
+  color: #93c5fd;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.email-uc-add-row:hover { background: rgba(59,130,246,0.08); }
+
+/* ========== 日程・時間帯ピッカー ========== */
+
+.email-date-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: 10px;
+}
+
+.email-date-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.email-date-entry-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+  flex: 1;
+}
+
+.email-date-entry-remove {
+  background: none;
+  border: none;
+  color: #475569;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.email-date-entry-remove:hover { color: #ef4444; }
+
+.email-time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.email-time-slot-btn {
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.email-time-slot-btn:hover {
+  background: rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.35);
+  color: #bfdbfe;
+}
+
+.email-time-slot-btn.selected {
+  background: rgba(59,130,246,0.25);
+  border-color: rgba(59,130,246,0.55);
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+/* ========== ヒアリング情報セクション ========== */
+
+.email-hearing-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255,255,255,0.015);
+  border: 1px dashed rgba(255,255,255,0.08);
+  border-radius: 10px;
+}
+
+.email-hearing-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.email-hearing-desc {
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748b;
+  margin-left: 4px;
+}
+
+/* ========== 生成ボタン上のセパレーター ========== */
+
+.email-generate-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 4px 0;
+}
+
+/* ========== カレンダー ライトグレー背景テーマ ========== */
+
+.email-calendar-popup .rdp {
+  --rdp-cell-size: 36px;
+  --rdp-accent-color: #93c5fd;
+  --rdp-background-color: #dbeafe;
+  color: #1e293b;
+  margin: 0;
+}
+
+.email-calendar-popup .rdp-day {
+  color: #334155;
+  border-radius: 6px;
+}
+
+.email-calendar-popup .rdp-day_selected {
+  background-color: #93c5fd !important;
+  color: #1e3a5f !important;
+  font-weight: 700;
+}
+
+.email-calendar-popup .rdp-day_selected:hover {
+  background-color: #60a5fa !important;
+  color: #1e3a5f !important;
+}
+
+.email-calendar-popup .rdp-day_today:not(.rdp-day_selected) {
+  color: #2563eb;
+  font-weight: 700;
+  border: 1px solid #93c5fd;
+}
+
+.email-calendar-popup .rdp-day:hover:not(.rdp-day_selected):not(.rdp-day_disabled) {
+  background: #dbeafe !important;
+  color: #1e40af;
+}
+
+.email-calendar-popup .rdp-day_disabled {
+  color: #94a3b8 !important;
+  opacity: 0.4;
+}
+
+.email-calendar-popup .rdp-head_cell {
+  color: #64748b !important;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.email-calendar-popup .rdp-caption_label {
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.email-calendar-popup .rdp-nav_button {
+  color: #64748b;
+}
+
+.email-calendar-popup .rdp-nav_button:hover {
+  color: #1e293b;
+  background: #e2e8f0 !important;
+}
+
+.email-calendar-popup .rdp-cell,
+.email-calendar-popup .rdp-table {
+  color: #334155;
+}
+
+/* ========== UseCaseCreator モーダル ========== */
+
+.uc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.uc-modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.uc-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  font-size: 15px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.uc-modal-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.uc-modal-close:hover { background: rgba(255,255,255,0.06); color: #f1f5f9; }
+
+.uc-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.uc-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.uc-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.uc-field-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #cbd5e1;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.15s;
+}
+
+.uc-field-check:hover { background: rgba(255,255,255,0.04); }
+.uc-field-check input { accent-color: #3b82f6; cursor: pointer; }
+.uc-field-locked { opacity: 0.7; cursor: default; }
+
+.uc-custom-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.uc-required-check {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #94a3b8;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.uc-required-check input { accent-color: #3b82f6; }
+
+.uc-remove-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.uc-remove-btn:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+.uc-add-field-btn {
+  background: none;
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.uc-add-field-btn:hover { border-color: rgba(99,102,241,0.4); color: #a5b4fc; }
+
+.uc-variable-hints {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  line-height: 1.7;
+}
+
+.uc-variable-hints span { color: #60a5fa; }
+
+.uc-cancel-btn {
+  padding: 9px 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.uc-cancel-btn:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
+
+.uc-save-btn {
+  padding: 9px 20px;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.uc-save-btn:hover:not(:disabled) { background: linear-gradient(135deg, #2563eb, #4f46e5); }
+.uc-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ========== 標準UC編集 ========== */
+
+.uc-fixed-vars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.uc-fixed-var-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+.email-uc-overridden-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 4px;
+  color: #fbbf24;
+  white-space: nowrap;
+}
+
+.uc-reset-btn {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
+  color: #fca5a5;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.uc-reset-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* ========== 時間入力 ========== */
+
+.email-time-range {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.email-time-input {
+  width: 36px;
+  padding: 4px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-family: monospace;
+  text-align: center;
+}
+
+.email-time-input:focus {
+  outline: none;
+  border-color: rgba(96, 165, 250, 0.5);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.email-time-input::placeholder {
+  color: #475569;
+}
+
+.email-time-sep {
+  color: #64748b;
+  font-size: 13px;
+  user-select: none;
+}
+
 /* ========== アポ取得ボタン ========== */
 
 .company-info-actions {
@@ -2482,12 +3508,12 @@ body {
 .appointment-button:hover:not(:disabled) {
   background: linear-gradient(135deg, #16a34a, #15803d);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
 }
 
 .appointment-button:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
-  opacity: 0.7;
+  transform: none;
 }
 
 .appointment-button.success {
@@ -2498,361 +3524,92 @@ body {
   animation: spin 1s linear infinite;
 }
 
-/* ========== AI推薦パネル ========== */
+/* ========== 推薦企業パネル ========== */
 
-.recommend-panel {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+.recommended-companies-panel {
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(34, 197, 94, 0.25);
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
-.recommend-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
-  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-}
-
-.recommend-header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.recommend-icon {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.recommend-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: white;
-  margin: 0;
+.recommended-companies-header {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-bottom: 16px;
 }
 
-.recommend-ai-badge {
-  font-size: 10px;
+.recommended-companies-header h3 {
+  font-size: 15px;
   font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 4px;
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-  color: white;
-}
-
-.recommend-source {
-  font-size: 13px;
-  color: #94a3b8;
-  margin: 4px 0 0 0;
-}
-
-.recommend-source-label {
   color: #22c55e;
-  font-weight: 600;
-  margin-right: 6px;
-}
-
-.recommend-content {
-  padding: 20px;
-}
-
-.recommend-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  gap: 12px;
-}
-
-.recommend-loading-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid rgba(139, 92, 246, 0.2);
-  border-top-color: #8b5cf6;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-.recommend-loading p {
-  font-size: 14px;
-  color: #94a3b8;
   margin: 0;
 }
 
-.recommend-empty {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.recommend-empty p {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0;
-}
-
-.recommend-error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.recommend-error svg {
-  color: #f87171;
-}
-
-.recommend-error p {
-  font-size: 14px;
-  color: #f87171;
-  margin: 0;
-}
-
-.recommend-list {
-  display: flex;
-  flex-direction: column;
+.recommended-companies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
 }
 
-.recommend-card {
+.recommended-company-card {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 18px 20px;
-  background: rgba(255, 255, 255, 0.04);
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.recommend-card:hover {
-  background: rgba(139, 92, 246, 0.1);
-  border-color: rgba(139, 92, 246, 0.3);
-  transform: translateX(4px);
+.recommended-company-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(34, 197, 94, 0.3);
+  transform: translateY(-2px);
 }
 
-.recommend-card-rank {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.recommended-company-name {
   font-size: 14px;
-  font-weight: 700;
-  color: white;
-  flex-shrink: 0;
-}
-
-.recommend-card-main {
-  flex: 1;
-}
-
-.recommend-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.recommend-card-name {
-  font-size: 15px;
   font-weight: 600;
-  color: white;
-  margin: 0;
+  color: #f1f5f9;
 }
 
-.recommend-card-industry {
-  font-size: 11px;
-  font-weight: 500;
-  padding: 4px 10px;
-  background: rgba(139, 92, 246, 0.2);
-  color: #a78bfa;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.recommend-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.recommend-card-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.recommended-company-industry {
   font-size: 12px;
   color: #94a3b8;
 }
 
-.recommend-card-meta-item svg {
+.recommended-company-info {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
   color: #64748b;
 }
 
-.recommend-card-meta-item.revenue {
-  color: #22c55e;
-}
-
-.recommend-card-meta-item strong {
-  margin-right: 4px;
-}
-
-.recommend-card-reason-box {
-  margin-top: 12px;
-  padding: 12px 14px;
-  background: rgba(251, 191, 36, 0.08);
-  border: 1px solid rgba(251, 191, 36, 0.2);
-  border-radius: 8px;
-}
-
-.recommend-reason-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #fbbf24;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.recommend-card-reason {
-  font-size: 13px;
-  color: #e2e8f0;
-  margin: 0;
-  line-height: 1.7;
-}
-
-.recommend-card-news {
-  margin-top: 12px;
-  padding: 12px 14px;
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 8px;
-}
-
-.recommend-news-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #60a5fa;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.recommend-news-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #93c5fd;
-  text-decoration: none;
+.recommended-company-reason {
+  font-size: 12px;
+  color: #94a3b8;
   line-height: 1.5;
-  transition: all 0.2s ease;
 }
 
-.recommend-news-link:hover {
-  color: #60a5fa;
-  text-decoration: underline;
-}
-
-.recommend-news-link svg {
-  flex-shrink: 0;
-  opacity: 0.7;
-}
-
-.recommend-search-btn {
+.recommended-loading {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  margin-top: 14px;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  border: none;
-  border-radius: 8px;
+  gap: 10px;
+  padding: 20px;
+  color: #94a3b8;
   font-size: 13px;
-  font-weight: 600;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.recommend-search-btn:hover {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
-}
-
-.recommend-card-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  color: #64748b;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.recommend-card:hover .recommend-card-action {
-  color: #8b5cf6;
-  transform: scale(1.1);
-}
-
-@media (max-width: 640px) {
-  .company-info-actions {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .company-info-link,
-  .appointment-button {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .recommend-card {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .recommend-card-rank {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-  }
-
-  .recommend-card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+.recommended-error {
+  padding: 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 13px;
 }
