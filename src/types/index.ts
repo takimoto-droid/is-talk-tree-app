@@ -90,6 +90,26 @@ export interface ObjectionHandler {
   followUp: string;
 }
 
+// AI生成スクリプト
+export interface GeneratedScript {
+  step: number;
+  title: string;
+  content: string;
+  tip: string;
+}
+
+// AI生成「ちなみに」リダイレクトトーク
+export interface GeneratedRedirect {
+  type: string;
+  label: string;
+  question: string;
+  questionTips: string;
+  caseIntro: string;
+  caseTips: string;
+  appointmentScript: string;
+  appointmentTips: string;
+}
+
 // 案件設定（Excelから読み込む）
 export interface ProjectConfig {
   // 製品/サービス情報
@@ -116,4 +136,34 @@ export interface ProjectConfig {
 
   // 競合との差別化ポイント（Excelから読み込む）
   competitiveDiff?: string;
+
+  // Slack連携
+  slackChannelUrl?: string;
+}
+
+// アポ成功企業
+export interface AppointmentSuccess {
+  id?: string;
+  company_name: string;
+  industry: string;
+  revenue?: string;
+  employees?: string;
+  date: string;
+  memo?: string;
+  embedding?: number[];
+  created_at?: string;
+}
+
+// AI推薦企業
+export interface RecommendedCompany {
+  company_name: string;
+  industry: string;
+  revenue?: string;
+  employees?: string;
+  reason: string;
+  similarity_score?: number;
+  dx_news?: {
+    title: string;
+    url: string;
+  };
 }

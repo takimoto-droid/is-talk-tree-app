@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { NewsItem, CaseStudy, ProjectConfig } from '@/types';
+import { NewsItem, CaseStudy, ProjectConfig, GeneratedScript } from '@/types';
 
 interface TalkScriptPanelProps {
   companyName: string;
@@ -10,10 +10,24 @@ interface TalkScriptPanelProps {
   bestCase: CaseStudy;
   secondCase: CaseStudy;
   config: ProjectConfig;
+  aiScripts?: GeneratedScript[];
+  aiScriptsLoading?: boolean;
+  companyInsights?: string;
 }
 
-export default function TalkScriptPanel({ companyName, industry, news, bestCase, secondCase, config }: TalkScriptPanelProps) {
+export default function TalkScriptPanel({
+  companyName,
+  industry,
+  news,
+  bestCase,
+  secondCase,
+  config,
+  aiScripts,
+  aiScriptsLoading,
+  companyInsights,
+}: TalkScriptPanelProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const [showInsights, setShowInsights] = useState(false);
 
   const topNews = news && news.length > 0 ? news[0] : null;
   const secondNews = news && news.length > 1 ? news[1] : null;
@@ -107,7 +121,8 @@ ${config.productName}の特徴として、
 
   const customProductIntro = getCustomizedProductIntro();
 
-  const scripts = [
+  // デフォルトスクリプト
+  const defaultScripts = [
     {
       step: 1,
       title: '冒頭挨拶',
@@ -169,6 +184,9 @@ ${config.productName}を導入いただくことで、
     },
   ];
 
+  // AIスクリプトがあればそれを使用、なければデフォルト
+  const scripts = aiScripts && aiScripts.length > 0 ? aiScripts : defaultScripts;
+
   return (
     <div className="script-panel animate-in">
       {/* ヘッダー */}
@@ -184,11 +202,35 @@ ${config.productName}を導入いただくことで、
             </svg>
           </div>
           <div>
-            <h3 className="script-title">トークスクリプト</h3>
+            <h3 className="script-title">
+              トークスクリプト
+              {aiScripts && aiScripts.length > 0 && (
+                <span className="script-ai-badge">AI生成</span>
+              )}
+              {aiScriptsLoading && (
+                <span className="script-ai-badge script-ai-loading">AI分析中...</span>
+              )}
+            </h3>
             <p className="script-subtitle">①〜⑥ 日程提案までの流れ</p>
           </div>
         </div>
         <div className="script-header-right">
+          {companyInsights && (
+            <button
+              className="script-insights-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowInsights(!showInsights);
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              企業情報
+            </button>
+          )}
           <div className={`script-toggle ${isOpen ? 'open' : ''}`}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="6 9 12 15 18 9"></polyline>
@@ -196,6 +238,25 @@ ${config.productName}を導入いただくことで、
           </div>
         </div>
       </div>
+
+      {/* 企業インサイト（Web検索結果） */}
+      {showInsights && companyInsights && (
+        <div className="script-insights">
+          <div className="script-insights-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            Web検索による{companyName}の情報
+          </div>
+          <div className="script-insights-content">
+            {companyInsights.split('\n').map((line, i) => (
+              <p key={i}>{line}</p>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* スクリプト本文 */}
       <div className={`script-content ${isOpen ? 'open' : ''}`}>

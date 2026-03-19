@@ -31,6 +31,7 @@ body {
 }
 
 .app-header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,6 +83,127 @@ body {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
   color: #f1f5f9;
+}
+
+.slack-settings-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(74, 21, 75, 0.2);
+  border: 1px solid rgba(74, 21, 75, 0.4);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #E01E5A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slack-settings-button:hover {
+  background: rgba(74, 21, 75, 0.3);
+  border-color: rgba(74, 21, 75, 0.6);
+}
+
+.slack-settings-button.configured {
+  background: rgba(74, 21, 75, 0.4);
+  border-color: #E01E5A;
+}
+
+.slack-input-panel {
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  margin-top: 8px;
+  width: 400px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slack-input-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  color: white;
+}
+
+.slack-input-body {
+  padding: 20px;
+}
+
+.slack-input-body label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.slack-url-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.slack-url-input:focus {
+  border-color: #E01E5A;
+}
+
+.slack-url-input::placeholder {
+  color: #64748b;
+}
+
+.slack-input-help {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.slack-input-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.slack-save-button {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #4A154B, #611f69);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slack-save-button:hover {
+  background: linear-gradient(135deg, #611f69, #7c2d7c);
 }
 
 .app-logo {
@@ -345,6 +467,76 @@ body {
   font-weight: 600;
   color: white;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.script-ai-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+}
+
+.script-ai-loading {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.script-insights-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #60a5fa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.script-insights-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.script-insights {
+  margin: 0 20px 20px 20px;
+  padding: 16px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+}
+
+.script-insights-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #60a5fa;
+  margin-bottom: 12px;
+}
+
+.script-insights-content {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.script-insights-content p {
+  margin: 4px 0;
 }
 
 .script-subtitle {
@@ -513,6 +705,23 @@ body {
   font-weight: 600;
   color: white;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tree-ai-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #22c55e, #10b981);
+  color: white;
+}
+
+.tree-ai-loading {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  animation: pulse 1.5s infinite;
 }
 
 .tree-subtitle {
@@ -1122,6 +1331,39 @@ body {
   flex-shrink: 0;
 }
 
+.tree-script-action {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tree-slack-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #4A154B, #611f69);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(74, 21, 75, 0.4);
+}
+
+.tree-slack-button:hover {
+  background: linear-gradient(135deg, #611f69, #7c2d7c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 21, 75, 0.5);
+}
+
+.tree-slack-button svg {
+  flex-shrink: 0;
+}
+
 /* スクロールバー */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #f0f0f0; }
@@ -1537,9 +1779,20 @@ body {
 }
 
 .case-source {
+  display: flex;
+  align-items: center;
   font-size: 11px;
   color: #64748b;
   font-style: italic;
+}
+
+.case-source-web {
+  color: #3b82f6;
+  font-style: normal;
+  font-weight: 500;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 .case-loading {
@@ -2200,4 +2453,406 @@ body {
 
 .tech-note svg {
   flex-shrink: 0;
+}
+
+/* ========== アポ取得ボタン ========== */
+
+.company-info-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.appointment-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.appointment-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.appointment-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.appointment-button.success {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.appointment-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* ========== AI推薦パネル ========== */
+
+.recommend-panel {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.recommend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.recommend-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.recommend-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.recommend-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recommend-ai-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  color: white;
+}
+
+.recommend-source {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 4px 0 0 0;
+}
+
+.recommend-source-label {
+  color: #22c55e;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.recommend-content {
+  padding: 20px;
+}
+
+.recommend-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 12px;
+}
+
+.recommend-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(139, 92, 246, 0.2);
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.recommend-loading p {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.recommend-empty {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.recommend-empty p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.recommend-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.recommend-error svg {
+  color: #f87171;
+}
+
+.recommend-error p {
+  font-size: 14px;
+  color: #f87171;
+  margin: 0;
+}
+
+.recommend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recommend-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recommend-card:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateX(4px);
+}
+
+.recommend-card-rank {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.recommend-card-main {
+  flex: 1;
+}
+
+.recommend-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.recommend-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.recommend-card-industry {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.recommend-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.recommend-card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.recommend-card-meta-item svg {
+  color: #64748b;
+}
+
+.recommend-card-meta-item.revenue {
+  color: #22c55e;
+}
+
+.recommend-card-meta-item strong {
+  margin-right: 4px;
+}
+
+.recommend-card-reason-box {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 8px;
+}
+
+.recommend-reason-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fbbf24;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recommend-card-reason {
+  font-size: 13px;
+  color: #e2e8f0;
+  margin: 0;
+  line-height: 1.7;
+}
+
+.recommend-card-news {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+}
+
+.recommend-news-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #60a5fa;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recommend-news-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #93c5fd;
+  text-decoration: none;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+}
+
+.recommend-news-link:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.recommend-news-link svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.recommend-search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recommend-search-btn:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.recommend-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: #64748b;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.recommend-card:hover .recommend-card-action {
+  color: #8b5cf6;
+  transform: scale(1.1);
+}
+
+@media (max-width: 640px) {
+  .company-info-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .company-info-link,
+  .appointment-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .recommend-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .recommend-card-rank {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  .recommend-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }

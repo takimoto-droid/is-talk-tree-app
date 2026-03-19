@@ -147,6 +147,7 @@ function parseProductInfo(data: string[][]): Omit<ProjectConfig, 'caseStudies' |
     meetingDuration: getValue('商談時間') || '1時間',
     meetingAgenda: getArrayValue('商談アジェンダ') || getArrayValue('アジェンダ'),
     searchKeywords: getArrayValue('検索キーワード') || getArrayValue('ニュースキーワード'),
+    slackChannelUrl: getValue('SlackチャネルURL') || getValue('Slack URL') || getValue('SlackURL'),
   };
 }
 
